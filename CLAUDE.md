@@ -2,6 +2,10 @@
 
 This repository provides agentic tools, skills, and the full legislative and judicial database for the GTA 5 RP **Mirror** server.
 
+> **ВАЖНО / CRITICAL**:
+> Этот конфигурационный файл работает **в связке со всей папкой репозитория** (`gta5rp-mirror-legislation/`, `scripts/`, `references/`).
+> Не копируйте `CLAUDE.md` в изоляции в пустую папку! Claude Code выполняет реальные поисковые скрипты и читает оффлайн-справочники. Для работы агенту нужна вся папка (склонированная через `git clone` или распакованная из ZIP-архива).
+
 ## Commands / Triggers
 Activate Module 3 (`gta5rp-mirror-legislation`) whenever the user starts a prompt with:
 - `/mirror-law <prompt>`

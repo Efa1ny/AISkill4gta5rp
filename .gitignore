@@ -7,3 +7,5 @@ venv/
 .DS_Store
 Thumbs.db
 .archived/
+dist/
+*.zip
