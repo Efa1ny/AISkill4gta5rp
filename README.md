@@ -73,15 +73,70 @@
 
 ---
 
-## Как подключить скиллы к ИИ-агенту
+## Руководство по установке и подключению плагина
 
-### 1. В Google Antigravity / Gemini CLI
-* **Как плагин**: скопируйте эту папку в `~/.gemini/config/plugins/gta5rp-suite/` или используйте `customization://`.
-* **Внутри рабочего проекта**: скопируйте папки модулей в `.agents/skills/`.
-* **Глобально (для всех проектов)**: добавьте путь к скиллам в `~/.gemini/config/skills.json`.
+### Вариант 1. Установка в Google Antigravity / Gemini CLI (Рекомендуемый)
 
-### 2. В Claude Code / Codex / Cursor
-* Добавьте ссылку на [`AGENTS.md`](./AGENTS.md) или [`CLAUDE.md`](./CLAUDE.md) в конфигурацию вашего проекта.
+#### Способ А: Как глобальный плагин (доступен во всех проектах и чатах)
+Склонируйте или скопируйте репозиторий в каталог плагинов Antigravity:
+```powershell
+# Создайте директорию плагина и скопируйте файлы:
+git clone https://github.com/Efa1ny/AISkill4gta5rp.git "$HOME\.gemini\config\plugins\gta5rp-suite"
+```
+После перезапуска Antigravity плагин `gta5rp-suite` появится в списке установленных расширений, а команды `/mirror-law`, `/mirror` и `/gta-law` станут доступны во всех диалогах.
+
+#### Способ Б: Локально в конкретный проект/воркспейс
+Если вы работаете в отдельной папке проекта (например, Discord-бота или системы мониторинга судов):
+```powershell
+# Создайте папку скиллов воркспейса (если её нет):
+mkdir -p .agents\skills
+
+# Скопируйте нужные модули (или создайте симлинки):
+Copy-Item -Recurse "C:\Projects\gta5rp skills\gta5rp-mirror-legislation" .agents\skills\
+Copy-Item -Recurse "C:\Projects\gta5rp skills\gta5rp-forum-documents" .agents\skills\
+Copy-Item -Recurse "C:\Projects\gta5rp skills\gta5rp-forum-navigation" .agents\skills\
+```
+
+---
+
+### Вариант 2. Подключение в Claude Code
+
+Добавьте правила и ссылку на скиллы в файл `CLAUDE.md` вашего рабочего проекта:
+```powershell
+# Скопируйте готовый конфигурационный файл:
+Copy-Item "C:\Projects\gta5rp skills\CLAUDE.md" ".\CLAUDE.md"
+```
+Либо добавьте в начало вашего `CLAUDE.md` строки:
+```markdown
+## GTA 5 RP Mirror Legislation
+When user types /mirror-law or asks about Mirror laws, refer to:
+C:\Projects\gta5rp skills\gta5rp-mirror-legislation\SKILL.md
+and run search queries via:
+python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --law <код> --article <номер>
+```
+
+---
+
+### Вариант 3. Подключение в Cursor, ChatGPT / Codex и веб-агентах
+
+1. **В Cursor**: добавьте файл `.cursorrules` (или сошлитесь на [`AGENTS.md`](./AGENTS.md) в настройках проекта *Project Rules*).
+2. **В ChatGPT / Custom GPTs**: загрузите файлы из папки `references/` и файл `references/laws/laws_index.json` в раздел **Knowledge** вашего Custom GPT, а в System Instructions вставьте текст из [`gta5rp-mirror-legislation/SKILL.md`](./gta5rp-mirror-legislation/SKILL.md).
+
+---
+
+## Памятка для Судей и Прокуроров (Примеры запросов)
+
+### Для Судей:
+* **Первичный аудит иска**: `«/mirror-law Проверь иск по ссылке: <URL>. Есть ли нарушения формы, подсудности или MG? Подготовь проект определения»`.
+* **Оценка видеозаписи по прецеденту**: `«/mirror-law Оцени видеофиксацию ответчика по ст. 17.6 УК с учетом прецедента Верховного суда LEP-№1 (было ли 2 требования и 10 секунд?)»`.
+* **Вынесение решений**: `«/mirror-law Составь проект заочного/очного решения суда по иску №...»`.
+* **Судебные ордера**: `«/mirror-law Выпиши ордер ASC на арест гражданина #... по решению суда»`.
+
+### Для Прокуроров:
+* **Задержание госника при исполнении**: `«/mirror-law Госника задержали за ст. 15.6 УК. Законно ли это по ст. 8 Закона о взаимодействии силовых структур?»`.
+* **Отказ от штрафа**: `«/mirror-law Гражданин нажал отмену штрафа. Проверь требования ст. 17.7 ч. 3 УК и прецедента LEP-1 (прошло ли 20 секунд?)»`.
+* **Постановления и ордера**: `«/mirror-law Составь постановление об истребовании видеозаписи задержания у сотрудника LSPD [LSPD | SWAT | #12345] на 24 часа»`.
+* **Снятие неприкосновенности**: `«/mirror-law Подготовь ордер типа IA в отношении руководства фракции для проведения допроса»`.
 
 ---
 
