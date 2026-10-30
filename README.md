@@ -157,7 +157,78 @@ When user types /mirror-law or asks about Mirror laws:
 
 ---
 
-### Вариант 4. Подключение в Cursor, Windsurf, VS Code
+### Вариант 4. Подключение в официальные десктопные приложения (Claude Desktop & ChatGPT Desktop)
+
+Если вы используете официальные приложения Claude или ChatGPT для Windows / macOS:
+
+#### 1. Claude Desktop (Приложение для Windows / Mac)
+
+В десктопном клиенте Claude доступны три удобных способа:
+
+* **Способ А: Через Claude Projects (Синхронизация с аккаунтом Pro / Team / Enterprise)**:
+  1. Скачайте архив репозитория: [**`AISkill4gta5rp-main.zip`**](https://github.com/Efa1ny/AISkill4gta5rp/archive/refs/heads/main.zip) (или соберите локально `py scripts/package_bundle.py`).
+  2. В левой панели приложения Claude Desktop откройте раздел **Projects** (Проекты) и создайте проект, например `GTA 5 RP Mirror Law`.
+  3. В блоке **Project Knowledge** нажмите **Add Content** -> перетащите ZIP-архив целиком (или файлы из папки `references/`).
+  4. В поле **Project Instructions** скопируйте и вставьте текст из файла [`CLAUDE.md`](./CLAUDE.md).
+  5. Любой диалог внутри этого проекта будет автоматически владеть законодательной базой Mirror и реагировать на команду `/mirror-law`.
+
+* **Способ Б: Через локальный MCP-сервер (Model Context Protocol — чтение с диска в реальном времени)**:
+  Claude Desktop поддерживает протокол MCP и умеет читать локальные файлы прямо на вашем компьютере:
+  1. Откройте файл конфигурации Claude Desktop:
+     - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+     - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+  2. Добавьте стандартный MCP-сервер файловой системы, указав путь к папке репозитория:
+     ```json
+     {
+       "mcpServers": {
+         "mirror-legislation": {
+           "command": "npx",
+           "args": [
+             "-y",
+             "@modelcontextprotocol/server-filesystem",
+             "C:\\Projects\\gta5rp skills"
+           ]
+         }
+       }
+     }
+     ```
+  3. Перезапустите Claude Desktop — в интерфейсе чата появится иконка MCP-инструментов, и Claude сможет самостоятельно читать статьи и законы с вашего диска.
+
+* **Способ В: Быстрый Drag-and-Drop в любой диалог**:
+  Если нужно разобрать отдельную ситуацию в обычном окне чата:
+  - Перетащите файл архива `AISkill4gta5rp-Mirror.zip` прямо в поле ввода сообщения.
+  - Напишите: `«Изучи прикрепленный архив с законами Mirror. В дальнейшем при команде /mirror-law руководствуйся ими. Ситуация: ...»`.
+
+---
+
+#### 2. ChatGPT Desktop (Приложение для Windows / Mac)
+
+В десктопном клиенте ChatGPT работа строится следующим образом:
+
+* **Способ А: Через Custom GPT (Самый стабильный и постоянный вариант)**:
+  Custom GPT, созданный в вашем аккаунте через браузер, **автоматически появляется в левой панели десктопного приложения ChatGPT**:
+  1. В веб-версии перейдите в **Explore GPTs** -> **Create**.
+  2. Во вкладке **Configure**:
+     - **Name**: `Mirror Law Assistant`
+     - **Instructions**: вставьте содержимое [`AGENTS.md`](./AGENTS.md).
+     - **Knowledge**: загрузите файлы из папки `references/laws/` и `laws_index.json` (или архив `AISkill4gta5rp-Mirror.zip`).
+     - **Capabilities**: обязательно включите галочку **Code Interpreter & Data Analysis**.
+  3. Сохраните GPT (**Save**).
+  4. Откройте десктопное приложение **ChatGPT Desktop** на Windows или Mac — ваш созданный ассистент будет доступен в боковом меню в 1 клик.
+
+* **Способ Б: Разовый анализ через Drag & Drop архива в чат**:
+  1. Перетащите скачанный файл `AISkill4gta5rp-Mirror.zip` мышкой в поле ввода чата ChatGPT Desktop.
+  2. Отправьте запрос:
+     ```text
+     Распакуй прикрепленный архив со справочниками и законами сервера Mirror.
+     Принимай команду /mirror-law как триггер для правового анализа.
+     Ситуация: [опишите RP-ситуацию или вопрос]
+     ```
+  3. ChatGPT Desktop через встроенный Code Interpreter распакует архив во временную песочницу, выполнит поиск по `laws_index.json` и предоставит квалификацию со ссылками на статьи.
+
+---
+
+### Вариант 5. Подключение в Cursor, Windsurf, VS Code
 
 1. Откройте склонированную папку `AISkill4gta5rp` в IDE через **File -> Open Folder**.
 2. В файле `.cursorrules` (или настройках Project Rules) сошлитесь на файл [`AGENTS.md`](./AGENTS.md).
