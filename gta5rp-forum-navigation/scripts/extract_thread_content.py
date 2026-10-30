@@ -20,8 +20,10 @@ from dataclasses import asdict, dataclass
 from html import unescape
 from html.parser import HTMLParser
 import json
+import os
 from pathlib import Path
 import re
+import subprocess
 import sys
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
@@ -114,17 +116,32 @@ def clean_html_text(raw: str) -> str:
     return unescape(re.sub(r"\s+", " ", text).strip())
 
 
-def fetch_url(url: str, timeout: int = 20) -> str:
-    req = Request(
-        url,
-        headers={
-            "User-Agent": DEFAULT_USER_AGENT,
-            "Accept-Language": "ru,en;q=0.9",
-        },
-    )
-    with urlopen(req, timeout=timeout) as response:
-        charset = response.headers.get_content_charset() or "utf-8"
-        return response.read().decode(charset, errors="replace")
+def fetch_url(url: str, timeout: int = 20, cookie: str | None = None) -> str:
+    cookie_val = (cookie or os.environ.get("GTA5RP_XF_USER", "")).strip()
+    if cookie_val.startswith("xf_user="):
+        cookie_val = cookie_val.split("=", 1)[1].strip()
+
+    headers = {
+        "User-Agent": DEFAULT_USER_AGENT,
+        "Accept-Language": "ru,en;q=0.9",
+    }
+    if cookie_val:
+        headers["Cookie"] = f"xf_user={cookie_val}"
+
+    try:
+        req = Request(url, headers=headers)
+        with urlopen(req, timeout=timeout) as response:
+            charset = response.headers.get_content_charset() or "utf-8"
+            return response.read().decode(charset, errors="replace")
+    except Exception:
+        cmd = ["curl.exe", "-sSL", "-A", DEFAULT_USER_AGENT]
+        if cookie_val:
+            cmd.extend(["-b", f"xf_user={cookie_val}"])
+        cmd.append(url)
+        res = subprocess.run(cmd, capture_output=True, timeout=timeout)
+        if res.returncode == 0 and res.stdout:
+            return res.stdout.decode("utf-8", errors="replace")
+        raise
 
 
 def classify_url(url: str) -> tuple[str, str | None]:
@@ -313,6 +330,8 @@ class BBWrapperParser(HTMLParser):
 
     def get_clean_text(self) -> str:
         raw = "".join(self.chunks)
+        raw = re.sub(r'\{\s*"lightbox_close".*?\}', "", raw, flags=re.DOTALL)
+        raw = raw.replace("\u200b", "").replace("\ufeff", "")
         lines = [re.sub(r"[ \t]+", " ", line).strip() for line in raw.splitlines()]
         cleaned = "\n".join(lines)
         return re.sub(r"\n{3,}", "\n\n", cleaned).strip()
@@ -501,6 +520,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("url", nargs="?", help="URL темы форума")
     parser.add_argument("--file", "-f", help="Путь к локальному HTML-файлу темы")
+    parser.add_argument("--cookie", "-c", help="Значение cookie xf_user (или через GTA5RP_XF_USER)")
     parser.add_argument("--json", action="store_true", help="Вывести результат в формате JSON")
     args = parser.parse_args(argv)
 
@@ -516,7 +536,7 @@ def main(argv: list[str] | None = None) -> int:
         source = str(path.resolve())
         base_url = FORUM_ORIGIN
     else:
-        html = fetch_url(args.url)
+        html = fetch_url(args.url, cookie=args.cookie)
         source = args.url
         base_url = args.url
 

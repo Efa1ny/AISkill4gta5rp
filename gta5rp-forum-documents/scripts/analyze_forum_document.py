@@ -49,8 +49,8 @@ CASE_CODE_RE = re.compile(
     re.IGNORECASE,
 )
 WARRANT_RE = re.compile(
-    r"\b(?:ОРДЕР|ORDER|ордер[ауом]?)\s*(?:№|N)?\s*((?:IA|AS|ASC|RI|SA|FW|ML)[-–—]?\s*[0-9A-Za-zА-Яа-я-]+)"
-    r"|\b((?:IA|AS|ASC|RI|SA)-\d+[A-Za-zА-Яа-я0-9-]*)\b",
+    r"\b(?:ОРДЕР|ORDER|ордер[ауом]?)\s*(?:№|N)?\s*((?:AR|AS|ASC|SA|IA|PTD|AC|SE|MD|FR|ML|RI|FW)[-–—]?\s*[0-9A-Za-zА-Яа-я-]+)"
+    r"|\b((?:AR|AS|ASC|SA|IA|PTD|AC|SE|MD|FR|ML|RI|FW)-\d+[A-Za-zА-Яа-я0-9-]*)\b",
     re.IGNORECASE,
 )
 STATIC_OR_PASSPORT_RE = re.compile(
@@ -135,6 +135,10 @@ def detect_document_type(title: str, first_post_text: str, breadcrumbs: list[dic
     elif "окружн" in b_low or "окружн" in body_low or "-dj" in body_low:
         jurisdiction = "Окружной суд (DJ)"
 
+    if "прецедент" in t_low or "прецедент" in b_low or "lep-" in body_low:
+        return "precedent (Судебный прецедент / Толкование НПА)", jurisdiction
+    if "апелляци" in t_low or "апелляци" in b_low or "кассаци" in t_low:
+        return "appeal (Апелляционная / Кассационная жалоба)", jurisdiction
     if re.search(r"\bформ[аы]\s+подачи\b|\bправила\s+подачи\b", t_low):
         return "template_or_rules (Форма / Правила подачи)", jurisdiction
     if "реабилитац" in t_low or "реабилитац" in b_low or "снятии судимости" in body_low:
@@ -443,6 +447,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("url", nargs="?", help="URL темы форума")
     parser.add_argument("--file", "-f", help="Путь к локальному HTML-файлу темы")
+    parser.add_argument("--cookie", "-c", help="Значение cookie xf_user (или через GTA5RP_XF_USER)")
     parser.add_argument("--json", action="store_true", help="Вывести результат в формате JSON")
     args = parser.parse_args(argv)
 
@@ -458,7 +463,7 @@ def main(argv: list[str] | None = None) -> int:
         source = str(path.resolve())
         base_url = FORUM_ORIGIN
     else:
-        html = fetch_url(args.url)
+        html = fetch_url(args.url, cookie=args.cookie)
         source = args.url
         base_url = args.url
 
