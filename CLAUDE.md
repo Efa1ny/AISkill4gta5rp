@@ -7,11 +7,12 @@ This repository provides agentic tools, skills, and the full legislative and jud
 > Не копируйте `CLAUDE.md` в изоляции в пустую папку! Claude Code выполняет реальные поисковые скрипты и читает оффлайн-справочники. Для работы агенту нужна вся папка (склонированная через `git clone` или распакованная из ZIP-архива).
 
 ## Commands / Triggers
-Activate Module 3 (`gta5rp-mirror-legislation`) whenever the user starts a prompt with:
-- `/mirror-law <prompt>`
-- `/mirror <prompt>`
-- `/gta-law <prompt>`
-or asks to analyze laws, arrests, searches, court claims, or GTA 5 RP mod mechanics.
+- `/mirror-on`: Включить постоянный правовой режим Mirror на весь чат (тумблер ВКЛ). Все дальнейшие вопросы по умолчанию оцениваются по законам Mirror из локальных файлов без поиска в интернете.
+- `/mirror-off`: Выключить постоянный режим Mirror и вернуться к обычному диалогу (тумблер ВЫКЛ).
+- `/mirror-mode <on|off|judge|prosecutor>`: Переключить профиль режима.
+- `/mirror-law <prompt>`: Разовый правовой анализ RP-ситуации, задержания, видеофиксации или иска.
+- `/mirror <prompt>`: Разовый поиск и дословное цитирование статьи из локальной базы законов.
+- `/gta-law <prompt>`: Общий юридический анализ GTA 5 RP.
 
 ## Modules Overview
 - `gta5rp-forum-navigation/`: XenForo 2.3 parser, hidden spoiler/quote expander, media extractor (Imgur, Yapx, YouTube, Google Docs/Sheets).
@@ -21,6 +22,7 @@ or asks to analyze laws, arrests, searches, court claims, or GTA 5 RP mod mechan
 ## Quick CLI Search (Zero Hallucination)
 Always verify article numbers and sanctions before answering:
 ```bash
+python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК --article 15.5
 python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК --article 17.6
 python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law ПК --article 15.1
 python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law "взаимодействие" --article 8.1
