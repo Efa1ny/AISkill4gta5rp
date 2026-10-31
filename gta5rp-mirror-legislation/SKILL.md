@@ -35,26 +35,37 @@ description: >-
 
 ---
 
-## 1. Быстрый поиск по законодательной базе (CLI-утилита)
+## 1. Извлечение статей законов (СТРОГО БЕЗ ВЫХОДА В ИНТЕРНЕТ)
 
-В распоряжении агента находится локальный индекс **1241 статьи** всех 34 законов сервера Mirror, реестра судебных прецедентов и OOC-правил:
+> ⛔ **КАТЕГОРИЧЕСКИЙ ЗАПРЕТ**:
+> **НЕ используй поиск в интернете (web search) и НЕ переходи по ссылкам на `forum.gta5rp.com`!**
+> Форум защищен авторизацией и блокирует агентов (HTTP 403 Forbidden), а в поисковиках находятся старые редакции законов других серверов (Alta, Downtown, Strawberry и др.).
+> 
+> **Все 34 официальных кодекса и закона сервера Mirror, прецеденты Верховного суда и OOC-правила уже скачаны и находятся в локальных файлах папки `references/laws/`!**
 
+### Способы чтения законов:
+
+#### А. В чат-клиентах без терминала (Claude Desktop, Claude.ai, ChatGPT)
+Используй инструмент чтения файлов (`read_file` / `view`) и открывай нужный markdown-файл напрямую:
+- **УК (Уголовный кодекс)**: `references/laws/criminal_code.md` (или `gta5rp-mirror-legislation/references/laws/criminal_code.md`, либо `C:/Projects/gta5rp skills/gta5rp-mirror-legislation/references/laws/criminal_code.md`)
+- **ПК (Процессуальный кодекс)**: `references/laws/procedure_code.md` (или `gta5rp-mirror-legislation/references/laws/procedure_code.md`)
+- **СК (Кодекс судоустройства)**: `references/laws/court_code.md`
+- **АК (Административный кодекс)**: `references/laws/administrative_code.md`
+- **ДК (Дорожный кодекс)**: `references/laws/traffic_code.md`
+- **ТК (Трудовой кодекс)**: `references/laws/labor_code.md`
+- **ЗОТ (Закрытые и охраняемые территории)**: `references/laws/closed_and_protected_areas.md`
+- **Взаимодействие силовых структур (ст. 8 задержания госников)**: `references/laws/law_enforcement_interaction.md`
+- **Прецеденты ВС Mirror (LEP-№1: тайминги 10с и 20с)**: `references/laws/precedents_3424533.md`
+- **OOC-правила сервера Mirror**: `references/laws/ooc_rules_mirror.md`
+- **Сводный индекс всех 1 241 статей**: `references/laws/laws_index.json`
+
+#### Б. В терминальных средах с поддержкой Python (Claude Code, Google Antigravity, Cursor)
+Запускай консольную утилиту поиска (0.05 сек, без галлюцинаций):
 ```powershell
-# 1. Точный поиск конкретной статьи (мгновенно выдает санкции, розыск в звездах, примечания):
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --law УК --article 17.6
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --law ПК --article 15.1
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --law "взаимодействие" --article 8.1
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --law "ордера" --article 2.1
-
-# 2. Полнотекстовый поиск по ключевым словам среди всех НПА:
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --query "неприкосновенность"
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --query "виртуальная парковка" --ooc
-
-# 3. Поиск по судебным прецедентам ВС Mirror:
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --precedents --query "LEP-1"
-
-# 4. Список всех 34 законов, слагов, алиасов и дат редакций:
-python "C:\Projects\gta5rp skills\gta5rp-mirror-legislation\scripts\search_mirror_law.py" --list
+python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law УК --article 15.5
+python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law ПК --article 15.1
+python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law "взаимодействие" --article 8.1
+python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --precedents --query "LEP-1"
 ```
 
 ---
