@@ -31,8 +31,13 @@
 ```text
 ├── README.md
 ├── plugin.json                            # Манифест плагина для Google Antigravity
+├── .claude-plugin/plugin.json             # Манифест плагина для Anthropic Claude Desktop
 ├── AGENTS.md                              # Универсальная инструкция для ИИ-агентов
 ├── CLAUDE.md                              # Конфигурация для Claude Code
+├── commands/                              # Слэш-команды Claude Desktop / Claude Code (/mirror-law, /mirror, /gta-law)
+│   ├── mirror-law.md
+│   ├── mirror.md
+│   └── gta-law.md
 ├── gta5rp-forum-navigation/               # Модуль 1: Навигация, чтение, ссылки и медиа
 │   ├── SKILL.md
 │   ├── references/
