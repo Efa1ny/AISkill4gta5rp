@@ -12,16 +12,20 @@ $ARGUMENTS
 НЕ ищи в интернете и НЕ открывай ссылки на `forum.gta5rp.com` (форум вернет 403 Forbidden). Все законы уже есть на диске!
 
 ### 📖 ИНСТРУКЦИЯ ПО ИЗВЛЕЧЕНИЮ СТАТЬИ:
-Открой соответствующий локальный файл (`read_file` / `view`):
-- Уголовный кодекс (УК): `references/laws/criminal_code.md` (или `gta5rp-mirror-legislation/references/laws/criminal_code.md`, либо `C:/Projects/gta5rp skills/gta5rp-mirror-legislation/references/laws/criminal_code.md`)
-- Процессуальный кодекс (ПК): `references/laws/procedure_code.md`
-- Кодекс судоустройства (СК): `references/laws/court_code.md`
-- Административный кодекс (АК): `references/laws/administrative_code.md`
-- Дорожный кодекс (ДК): `references/laws/traffic_code.md`
-- Трудовой кодекс (ТК): `references/laws/labor_code.md`
-- Закон о взаимодействии силовых структур: `references/laws/law_enforcement_interaction.md`
-- Прецеденты Верховного суда: `references/laws/precedents_3424533.md`
-- Сводный индекс статей: `references/laws/laws_index.json`
+Файлы законов находятся в папке скилла `skills/gta5rp-mirror-legislation/references/laws/`.
+В контейнере найди их через:
+`find /mnt/skills/ -name "<имя_файла>"`
+- Судебный кодекс (СК): `court_code.md`
+- Уголовный кодекс (УК): `criminal_code.md`
+- Процессуальный кодекс (ПК): `procedure_code.md`
+- Административный кодекс (АК): `administrative_code.md`
+- Дорожный кодекс (ДК): `traffic_code.md`
+- Трудовой кодекс (ТК): `labor_code.md`
+- Закон о взаимодействии силовых структур: `law_enforcement_interaction.md`
+- Прецеденты Верховного суда: `precedents_3424533.md`
+- Сводный индекс статей: `laws_index.json`
+- Консольный поиск:
+  `python3 $(find /mnt/skills -name "search_mirror_law.py") --law <код> --article <номер>`
 
 Выдай:
 1. Полный текст диспозиции статьи из файла.

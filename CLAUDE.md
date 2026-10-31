@@ -3,31 +3,35 @@
 This repository provides agentic tools, skills, and the full legislative and judicial database for the GTA 5 RP **Mirror** server.
 
 > **ВАЖНО / CRITICAL**:
-> Этот конфигурационный файл работает **в связке со всей папкой репозитория** (`gta5rp-mirror-legislation/`, `scripts/`, `references/`).
+> Этот конфигурационный файл работает **в связке со всей папкой репозитория** (`skills/`, `commands/`, `references/`).
 > Не копируйте `CLAUDE.md` в изоляции в пустую папку! Claude Code выполняет реальные поисковые скрипты и читает оффлайн-справочники. Для работы агенту нужна вся папка (склонированная через `git clone` или распакованная из ZIP-архива).
 
 ## Commands / Triggers
 - `/mirror-on`: Включить постоянный правовой режим Mirror на весь чат (тумблер ВКЛ). Все дальнейшие вопросы по умолчанию оцениваются по законам Mirror из локальных файлов без поиска в интернете.
 - `/mirror-off`: Выключить постоянный режим Mirror и вернуться к обычному диалогу (тумблер ВЫКЛ).
 - `/mirror-mode <on|off|judge|prosecutor>`: Переключить профиль режима.
-- `/mirror-law <prompt>`: Разовый правовой анализ RP-ситуации, задержания, видеофиксации или иска.
-- `/mirror <prompt>`: Разовый поиск и дословное цитирование статьи из локальной базы законов.
+- `/mirror-law <prompt>`: Разовый правовой анализ RP-ситуации, задержания, видеофиксации или иска (Модуль 3).
+- `/mirror <prompt>`: Разовый поиск и дословное цитирование статьи из локальной базы законов (Модуль 3).
+- `/check-claim <prompt>`: Процессуальный аудит иска/обращения: форма, паспорт, пошлина, сроки SLA, детектор MG (Модуль 2).
+- `/check-warrant <prompt>`: Проверка или составление ордеров AR, AS, ASC, SA, IA, PTD, AC, SE, MD, FR (Модуль 2).
+- `/read-thread <prompt>`: Разбор темы форума XenForo, раскрытие спойлеров и ссылок на видеозаписи (Модуль 1).
 - `/gta-law <prompt>`: Общий юридический анализ GTA 5 RP.
 
 ## Modules Overview
-- `gta5rp-forum-navigation/`: XenForo 2.3 parser, hidden spoiler/quote expander, media extractor (Imgur, Yapx, YouTube, Google Docs/Sheets).
-- `gta5rp-forum-documents/`: Court claim audit, SLA tracker (24h/72h/96h), fee/passport checks, MetaGaming detector.
-- `gta5rp-mirror-legislation/`: Complete Mirror legislation (34 laws/codes), Supreme Court precedents (`LEP-№1`), OOC overrides, game mechanics.
+- `skills/gta5rp-forum-navigation/`: XenForo 2.3 parser, hidden spoiler/quote expander, media extractor (Imgur, Yapx, YouTube, Google Docs/Sheets).
+- `skills/gta5rp-forum-documents/`: Court claim audit, SLA tracker (24h/72h/96h), fee/passport checks, MetaGaming detector.
+- `skills/gta5rp-mirror-legislation/`: Complete Mirror legislation (34 laws/codes), Supreme Court precedents (`LEP-№1`), OOC overrides, game mechanics.
 
 ## Quick CLI Search (Zero Hallucination)
 Always verify article numbers and sanctions before answering:
 ```bash
-python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК --article 15.5
-python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК --article 17.6
-python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law ПК --article 15.1
-python gta5rp-mirror-legislation/scripts/search_mirror_law.py --law "взаимодействие" --article 8.1
-python gta5rp-mirror-legislation/scripts/search_mirror_law.py --precedents --query "LEP-1"
-python gta5rp-mirror-legislation/scripts/search_mirror_law.py --ooc --query "штурм"
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК --article 15.5
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК --article 17.6
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law СК --article 15.12
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law ПК --article 15.1
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law "взаимодействие" --article 8.1
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --precedents --query "LEP-1"
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --ooc --query "штурм"
 ```
 
 ## Key Server Rules & Conventions
