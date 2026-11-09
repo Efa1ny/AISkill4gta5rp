@@ -24,7 +24,7 @@ description: Включить постоянный правовой режим G
      * Закон о взаимодействии силовых структур (ст. 8): `law_enforcement_interaction.md`
      * Прецеденты Верховного суда: `precedents_3424533.md`
      * OOC-правила сервера Mirror: `ooc_rules_mirror.md`
-     * Сводный индекс всех 1241 статей: `laws_index.json`
+     * Сводный индекс всех 1862 статей: `laws_index.json`
    - Также доступна утилита поиска в терминале:
      `python3 $(find /mnt/skills -name "search_mirror_law.py") --law <кодекс> --article <номер>`
 4. **Золотые правила Mirror**:

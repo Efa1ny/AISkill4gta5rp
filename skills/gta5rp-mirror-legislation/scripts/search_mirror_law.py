@@ -79,10 +79,8 @@ def search_article(index: dict, slug: str, article_num: str) -> list[dict]:
     articles = law_meta.get("articles", {})
     target = article_num.strip().rstrip(".*")
 
-    results = []
-    # 1. Точное совпадение номера
-    if target in articles:
-        results.append(articles[target])
+    # 1. Точное совпадение номера (включая повторы вида «14 (Раздел 6 …)»)
+    results = [art for num, art in articles.items() if num == target or num.startswith(target + " (")]
 
     # 2. Префиксное или похожее совпадение (например 17.6 и 17.6.1)
     if not results:

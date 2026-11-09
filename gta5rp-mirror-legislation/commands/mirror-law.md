@@ -25,7 +25,7 @@ $ARGUMENTS
 - **Взаимодействие силовых структур (ст. 8 задержания госников)**: `law_enforcement_interaction.md`
 - **Прецеденты Верховного суда (LEP-№1 от 19.10.2026)**: `precedents_3424533.md`
 - **OOC правила сервера Mirror**: `ooc_rules_mirror.md`
-- **Сводный индекс всех 1241 статей**: `laws_index.json`
+- **Сводный индекс всех 1862 статей**: `laws_index.json`
 - **Консольный скрипт поиска**:
   `python3 $(find /mnt/skills -name "search_mirror_law.py") --law <код> --article <номер>`
 
