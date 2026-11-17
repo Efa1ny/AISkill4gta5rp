@@ -19,7 +19,7 @@ This repository provides agentic tools, skills, and the full legislative and jud
 ## Modules Overview
 - `skills/gta5rp-forum-navigation/`: XenForo 2.3 parser, hidden spoiler/quote expander, media extractor (Imgur, Yapx, YouTube, Google Docs/Sheets).
 - `skills/gta5rp-forum-documents/`: Court claim audit, SLA tracker (24h/72h/96h), fee/passport checks, MetaGaming detector.
-- `skills/gta5rp-mirror-legislation/`: Complete Mirror legislation (34 laws/codes), Supreme Court precedents (`LEP-№1`), OOC overrides, game mechanics.
+- `skills/gta5rp-mirror-legislation/`: Complete Mirror legislation (34 laws/codes), Supreme Court precedents registry (no acts in force; LEP-№1 removed 14.11.2026), OOC overrides, game mechanics.
 
 ## Quick CLI Search (Zero Hallucination)
 Always verify article numbers and sanctions before answering:
@@ -29,13 +29,13 @@ python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law УК 
 python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law СК --article 15.12
 python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law ПК --article 15.1
 python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law "взаимодействие" --article 8.1
-python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --precedents --query "LEP-1"
+python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --law ПК --article 1.4.1
 python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --ooc --query "штурм"
 ```
 
 ## Key Server Rules & Conventions
 1. OOC server rules always override IC legislation in case of conflict.
-2. Supreme Court Precedent `LEP-№1`: continuous video record, 2 demands + 10s wait for art. 17.6 УК; ticket + 20s wait for art. 17.7 p. 3 УК.
+2. LEP-№1 is removed (14.11.2026) — never cite it. Art. 17.6 УК: lawful demand (ПК 1.4) given twice, reasonable time (ПК 1.5, no 10s rule), future-directed demands are unlawful, the officer proves lawfulness (ПК 1.4.1); failing a demand to stop an administrative offence is АК 5.2, not 17.6; refusing to remove a mask is 17.6 at once (note to АК 6.7). Art. 17.7 УК: ignoring the ticket for 20s (the article's own note). Precedents and practice are adopted by the Plenum of the Supreme Court (СК 7.6–7.11, ch. 35).
 3. State employees on duty can only be detained for violent/felony crimes explicitly listed in art. 8 of Law on Law Enforcement Interaction (never on the spot for art. 15.1 / 15.6).
 4. Only DB (LSPD/LSSD) and CID (FIB) may write raid case files. Only MP (NG) may patrol for deserters.
 5. In-game mechanics: Handcuffs (`X`), Escort (`Z`), WANTED tag in Green Zones without mask, SP secret identity, 180° bodycam from 24/7, virtual parking protection.
