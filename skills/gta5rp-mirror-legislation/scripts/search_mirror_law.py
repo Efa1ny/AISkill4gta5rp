@@ -11,7 +11,7 @@
   python search_mirror_law.py --law "взаимодействие" --article 8.1
   python search_mirror_law.py --query "неповиновение"
   python search_mirror_law.py --query "штурм титульного района" --ooc
-  python search_mirror_law.py --precedents --query "LEP-1"
+  python search_mirror_law.py --precedents --query "Пленум"
   python search_mirror_law.py --law УК --article 15.1 --json
 """
 
