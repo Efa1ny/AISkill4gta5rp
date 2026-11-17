@@ -1,0 +1,14 @@
+{
+  "name": "efa1ny-gta5rp",
+  "description": "Плагины GTA 5 RP от Efa1ny: законодательная база сервера Mirror, аудит исков и разбор форума",
+  "owner": {
+    "name": "Efa1ny"
+  },
+  "plugins": [
+    {
+      "name": "gta5rp-suite",
+      "source": "./",
+      "description": "Законодательная база сервера Mirror (34 НПА), аудит исков и разбор тем форума GTA 5 RP"
+    }
+  ]
+}

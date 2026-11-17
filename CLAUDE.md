@@ -39,4 +39,4 @@ python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --ooc --que
 
 ## Maintaining the plugin
 - Edit only `commands/` and `skills/`, then run `python scripts/sync_copies.py`: the top-level module folders and `skills/gta5rp-mirror-legislation/commands/` are generated copies.
-- Update laws: `python skills/gta5rp-mirror-legislation/scripts/sync_mirror_laws.py` (needs the `GTA5RP_XF_USER` cookie or `--html-dir`), review `git diff`, bump the version in both `plugin.json`, push to `main`.
+- Update laws: `python skills/gta5rp-mirror-legislation/scripts/sync_mirror_laws.py` (needs the `GTA5RP_XF_USER` cookie or `--html-dir`), review `git diff`, push to `main`. The script bumps the patch version in both `plugin.json`; bump it yourself after manual edits — the Claude Code marketplace (`.claude-plugin/marketplace.json`) only ships updates when `version` changes.

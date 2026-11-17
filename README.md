@@ -119,11 +119,23 @@ Copy-Item -Recurse "gta5rp-forum-navigation" .agents\skills\
 
 ---
 
-### Вариант 2. Подключение в Claude Code (CLI в терминале)
+### Вариант 2. Подключение в Claude Code (CLI в терминале и вкладка Code в Claude Desktop)
 
-Claude Code запускается в командной строке и оперирует файлами текущей рабочей директории.
+#### Способ А (рекомендуемый): маркетплейс плагинов с автообновлением
+Репозиторий — маркетплейс Claude Code (`.claude-plugin/marketplace.json`). Установка в сессии Claude Code:
+```
+/plugin marketplace add Efa1ny/AISkill4gta5rp
+/plugin install gta5rp-suite@efa1ny-gta5rp
+```
+Или одной командой в терминале: `claude plugin install gta5rp-suite --marketplace Efa1ny/AISkill4gta5rp`.
 
-#### Способ А: Автономная работа (запуск Claude Code прямо в папке репозитория)
+**Включи автообновление один раз**: `/plugin` → **Marketplaces** → `efa1ny-gta5rp` → **Enable auto-update**. После этого каждая новая версия с GitHub ставится сама при запуске Claude Code. Без автообновления обнови вручную: `/plugin marketplace update efa1ny-gta5rp`.
+
+> Если у вас нет SSH-ключа GitHub и установка падает на клонировании, задайте переменную окружения `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`.
+
+Команды плагина вызываются с префиксом плагина: `/gta5rp-suite:mirror-on`, `/gta5rp-suite:mirror-law` и т. д.
+
+#### Способ Б: Автономная работа (запуск Claude Code прямо в папке репозитория)
 1. Склонируйте репозиторий или распакуйте скачанный ZIP-архив:
    ```bash
    git clone https://github.com/Efa1ny/AISkill4gta5rp.git
@@ -135,7 +147,7 @@ Claude Code запускается в командной строке и опе�
    ```
    Claude Code мгновенно подхватит конфигурацию из корневого `CLAUDE.md`, увидит локальные папки с законами и скриптами, и будет отвечать на команды `/mirror-law <запрос>` без галлюцинаций.
 
-#### Способ Б: Встраивание в ваш существующий проект (бот, веб-сервис, парсер)
+#### Способ В: Встраивание в ваш существующий проект (бот, веб-сервис, парсер)
 Не копируйте `CLAUDE.md` без файлов! Подключите репозиторий целиком как подпапку:
 ```bash
 # Добавьте репозиторий как git submodule или распакуйте архив в подпапку проекта:
@@ -288,14 +300,15 @@ When user types /mirror-law or asks about Mirror laws:
    python skills/gta5rp-mirror-legislation/scripts/sync_mirror_laws.py --only criminal_code procedure_code
    ```
    Если форум отдаёт скрипту 403 — сохрани страницы тем из браузера как `thread_<ID темы>.html` и запусти с `--html-dir <папка>`.
-   Скрипт перезаписывает только изменившиеся `references/laws/*.md`, пересобирает `laws_index.json` и копии модулей. Тема, которая не скачалась, остаётся как была.
+   Скрипт перезаписывает только изменившиеся `references/laws/*.md`, пересобирает `laws_index.json`, поднимает patch-версию в обоих `plugin.json` и обновляет копии модулей. Тема, которая не скачалась, остаётся как была.
 2. Проверь `git diff`: номера статей, санкции, дату редакции в шапке файла.
 3. Если правил вручную `commands/` или `skills/` — синхронизируй дубли: `python scripts/sync_copies.py` (`--check` — только проверка).
-4. Подними версию в `plugin.json` и `.claude-plugin/plugin.json`, закоммить и запушь в `main`.
+4. Закоммить и запушь в `main`. Если менял что-то руками без скрипта — сам подними `version` в `plugin.json` и `.claude-plugin/plugin.json`: маркетплейс Claude Code ставит обновление только при смене версии.
 
 ### Для пользователей
 - **Claude Desktop**: скачай свежий [ZIP](https://github.com/Efa1ny/AISkill4gta5rp/archive/refs/heads/main.zip) и загрузи плагин заново (Настройки → Плагины). Версия в карточке плагина должна совпасть с `plugin.json` на GitHub.
-- **Claude Code / Antigravity / Gemini CLI** (установка через `git clone`): `git pull` в папке плагина.
+- **Claude Code через маркетплейс**: обновляется сам, если включено автообновление (см. «Вариант 2»), иначе `/plugin marketplace update efa1ny-gta5rp`.
+- **Antigravity / Gemini CLI / Claude Code из папки** (установка через `git clone`): `git pull` в папке плагина.
 - **Claude Projects / Custom GPT**: замени загруженный архив или файлы `references/laws/` на свежие.
 
 ---

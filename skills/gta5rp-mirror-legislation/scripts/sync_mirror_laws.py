@@ -5,9 +5,11 @@
   1. скачать темы раздела 2181 (ID тем берутся из references/laws/laws_index.json);
   2. записать references/laws/<slug>.md (шапка + текст первого поста; у ленты изменений — все посты);
   3. пересобрать laws_index.json (build_laws_index.py);
-  4. обновить копии модулей (scripts/sync_copies.py в корне репозитория).
-Дальше вручную: просмотреть `git diff`, поднять версию в plugin.json и .claude-plugin/plugin.json,
-закоммитить и запушить — пользователи получают базу переустановкой плагина с GitHub.
+  4. поднять patch-версию в plugin.json и .claude-plugin/plugin.json (без этого маркетплейс
+     Claude Code не увидит обновление);
+  5. обновить копии модулей (scripts/sync_copies.py в корне репозитория).
+Дальше вручную: просмотреть `git diff`, закоммитить и запушить в main. Пользователи Claude Code
+с включённым автообновлением маркетплейса получат базу сами, остальные — переустановкой с GitHub.
 
 Раздел закрыт авторизацией: нужен cookie xf_user (--cookie или переменная окружения GTA5RP_XF_USER).
 Если форум отдаёт 403 скрипту, сохрани страницы тем из браузера как thread_<ID>.html и передай --html-dir.
@@ -89,6 +91,22 @@ def render(slug: str, thread_id: int, old_title: str, edition: str | None, body:
     ])
 
 
+def bump_patch_version() -> str | None:
+    """1.2.0 → 1.2.1 в обоих манифестах: маркетплейс Claude Code обновляет плагин только при смене version."""
+    root = BASE_DIR.parent.parent
+    new_version = None
+    for manifest in (root / "plugin.json", root / ".claude-plugin" / "plugin.json"):
+        if not manifest.exists():
+            continue
+        raw = manifest.read_text(encoding="utf-8")
+        m = re.search(r'"version":\s*"(\d+)\.(\d+)\.(\d+)"', raw)
+        if not m:
+            continue
+        new_version = f"{m[1]}.{m[2]}.{int(m[3]) + 1}"
+        manifest.write_text(raw[:m.start()] + f'"version": "{new_version}"' + raw[m.end():], encoding="utf-8", newline="\n")
+    return new_version
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Обновление законодательной базы Mirror с форума")
     parser.add_argument("--cookie", help="Значение cookie xf_user (или переменная GTA5RP_XF_USER)")
@@ -134,6 +152,9 @@ def main(argv: list[str] | None = None) -> int:
     if changed:
         print("\nПересборка laws_index.json:")
         build_laws_index.main()
+        version = bump_patch_version()  # до sync_copies не нужно: манифесты лежат в корне, а не в модулях
+        if version:
+            print(f"Версия плагина: {version}")
         sys.path.insert(0, str(BASE_DIR.parent.parent / "scripts"))
         import sync_copies
         sync_copies.main([])
@@ -142,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
     for f in failed:
         print(f"  [FAIL] {f}")
     if changed:
-        print("Дальше: git diff → поднять версию в plugin.json и .claude-plugin/plugin.json → commit → push.")
+        print("Дальше: git diff → commit → push в main (версия уже поднята).")
     return 1 if failed else 0
 
 
