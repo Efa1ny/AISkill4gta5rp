@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Утилита синхронизации законодательной базы сервера Mirror с форума GTA 5 RP.
+"""Обновление законодательной базы сервера Mirror с форума GTA 5 RP (инструмент мейнтейнера).
 
-Позволяет выгрузить актуальные редакции 34 тем Законодательной базы (раздел 2181),
-прецедентов (3424533) и дополнительных правил сервера (2164) в локальную папку
-references/laws/ и пересобрать поисковый индекс laws_index.json.
+Конвейер:
+  1. скачать темы раздела 2181 (ID тем берутся из references/laws/laws_index.json);
+  2. записать references/laws/<slug>.md (шапка + текст первого поста; у ленты изменений — все посты);
+  3. пересобрать laws_index.json (build_laws_index.py);
+  4. обновить копии модулей (scripts/sync_copies.py в корне репозитория).
+Дальше вручную: просмотреть `git diff`, поднять версию в plugin.json и .claude-plugin/plugin.json,
+закоммитить и запушить — пользователи получают базу переустановкой плагина с GitHub.
 
-Для доступа к разделу Government требуется cookie xf_user авторизованного пользователя.
-Cookie можно передать через аргумент --cookie или переменную окружения GTA5RP_XF_USER.
+Раздел закрыт авторизацией: нужен cookie xf_user (--cookie или переменная окружения GTA5RP_XF_USER).
+Если форум отдаёт 403 скрипту, сохрани страницы тем из браузера как thread_<ID>.html и передай --html-dir.
+Тема, которая не скачалась или не распарсилась, не трогается (старый файл остаётся).
 
-Примеры запуска:
-  python sync_mirror_laws.py --cookie "585194,cfXw..."
-  $env:GTA5RP_XF_USER = "585194,cfXw..."
-  python sync_mirror_laws.py
+Примеры:
+  python sync_mirror_laws.py --cookie "<id>,<токен>"
+  python sync_mirror_laws.py --html-dir ./saved_pages
+  python sync_mirror_laws.py --only criminal_code procedure_code
 """
 
 from __future__ import annotations
@@ -21,120 +26,127 @@ import json
 import os
 from pathlib import Path
 import re
-import subprocess
 import sys
-import tempfile
-from urllib.parse import unquote
 
-# Импортируем сборщик базы
 SCRIPTS_DIR = Path(__file__).resolve().parent
 BASE_DIR = SCRIPTS_DIR.parent
-NAV_SCRIPTS_DIR = BASE_DIR.parent / "gta5rp-forum-navigation" / "scripts"
-sys.path.insert(0, str(NAV_SCRIPTS_DIR))
-import extract_thread_content as etc
+LAWS_DIR = BASE_DIR / "references" / "laws"
+INDEX_PATH = LAWS_DIR / "laws_index.json"
+sys.path.insert(0, str(BASE_DIR.parent / "gta5rp-forum-navigation" / "scripts"))
+sys.path.insert(0, str(SCRIPTS_DIR))
+import build_laws_index  # noqa: E402
+import extract_thread_content as etc  # noqa: E402
 
-THREAD_SLUGS = {
-    3423983: "constitution",
-    3424268: "criminal_code",
-    3424266: "procedure_code",
-    3424313: "court_code",
-    3424267: "administrative_code",
-    3423980: "traffic_code",
-    3423982: "labor_code",
-    3423981: "ethics_code",
-    3423979: "warrant_system",
-    3423971: "closed_and_protected_areas",
-    3423972: "fib",
-    3423962: "secret_service_usss",
-    3423960: "state_officials_status",
-    3423973: "law_enforcement_interaction",
-    3423959: "state_secrets",
-    3423967: "weapons",
-    3424269: "saspa",
-    3423964: "penitentiary_institutions",
-    3423969: "justice_department_and_prosecution",
-    3423974: "regional_law_enforcement_lspd_lssd",
-    3423975: "national_guard",
-    3423976: "ems",
-    3423966: "bar_association",
-    3423970: "government",
-    3425164: "document_flow",
-    3424765: "legislative_initiative",
-    3423978: "medical_inspections",
-    3423961: "prosecution_inspections",
-    3423968: "special_regimes",
-    3423977: "entrepreneurship",
-    3423965: "electoral_code",
-    3423958: "media_weazel_news",
-    3423963: "biological_resources",
-    3424474: "law_changes_info",
-}
+CHANGELOG_SLUG = "law_changes_info"
+CATEGORY = "Законодательная база штата Сан-Андреас (Сервер Mirror)"
+EDITION_RE = re.compile(r"[Рр]едакци[яи] от (\d\d\.\d\d\.\d{4})")
+MIN_TEXT_LEN = 300  # короче — почти наверняка страница входа или ошибка, а не закон
 
 
-def download_thread_html(thread_id: int, cookie_val: str, out_path: Path) -> bool:
-    url = f"https://forum.gta5rp.com/threads/{thread_id}/"
-    cmd = [
-        "curl.exe",
-        "-sSL",
-        "-A",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        "-b",
-        f"xf_user={cookie_val}",
-        url,
-        "-o",
-        str(out_path),
-    ]
-    try:
-        res = subprocess.run(cmd, capture_output=True, timeout=25)
-        if res.returncode == 0 and out_path.exists() and out_path.stat().st_size > 10000:
-            return True
-    except Exception as exc:
-        sys.stderr.write(f"Ошибка при загрузке темы {thread_id}: {exc}\n")
-    return False
+def fetch_posts(thread_id: int, cookie: str, html_dir: Path | None, all_pages: bool) -> tuple[str, list]:
+    url = f"{etc.FORUM_ORIGIN}/threads/{thread_id}/"
+    if html_dir:
+        # shortcut: офлайн читается только первая страница; ленту изменений на нескольких страницах качай онлайн
+        html = (html_dir / f"thread_{thread_id}.html").read_text(encoding="utf-8", errors="replace")
+        res = etc.parse_thread_html(html, source=url)
+        return res.title, res.posts
+    title, posts = "", []
+    while url:
+        res = etc.parse_thread_html(etc.fetch_url(url, timeout=25, cookie=cookie), source=url)
+        title = title or res.title
+        posts += res.posts
+        url = res.next_page_url if all_pages else None
+    return title, posts
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Синхронизация законодательной базы Mirror")
-    parser.add_argument("--cookie", help="Значение cookie xf_user (или через переменную GTA5RP_XF_USER)")
-    args = parser.parse_args()
+def edition_of(title: str, post) -> str | None:
+    m = EDITION_RE.search(title) or EDITION_RE.search(post.text[:2000])
+    if m:
+        return m.group(1)
+    iso = post.last_edited_at or post.published_at  # 2026-11-14T15:41:00+0300
+    return f"{iso[8:10]}.{iso[5:7]}.{iso[:4]}" if iso else None
 
-    cookie = (args.cookie or os.environ.get("GTA5RP_XF_USER", "")).strip()
-    if cookie.startswith("xf_user="):
-        cookie = cookie.split("=", 1)[1].strip()
 
-    if not cookie:
-        sys.stderr.write(
-            "Для доступа к закрытому разделу законодательства укажите cookie xf_user:\n"
-            "  python sync_mirror_laws.py --cookie '<номер>,<токен>'\n"
-            "  или задайте переменную окружения $env:GTA5RP_XF_USER = '<номер>,<токен>'\n"
-        )
+def render(slug: str, thread_id: int, old_title: str, edition: str | None, body: str) -> str:
+    base = re.sub(r"\s*\(Редакция от [^)]*\)\s*$", "", old_title).strip()
+    if slug == CHANGELOG_SLUG or not edition:
+        title, edition_line = base, "Актуальная"
+    else:
+        title, edition_line = f"{base} (Редакция от {edition})", edition
+    return "\n".join([
+        f"# {title}",
+        "",
+        f"- **ID темы на форуме**: `{thread_id}`",
+        f"- **URL темы**: {etc.FORUM_ORIGIN}/threads/{thread_id}/",
+        f"- **Редакция**: {edition_line}",
+        f"- **Категория**: {CATEGORY}",
+        "- **Индексированных статей/разделов**: 0",  # число проставит build_laws_index
+        "",
+        "---",
+        "",
+        body.strip(),
+        "",
+    ])
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Обновление законодательной базы Mirror с форума")
+    parser.add_argument("--cookie", help="Значение cookie xf_user (или переменная GTA5RP_XF_USER)")
+    parser.add_argument("--html-dir", type=Path, help="Папка с сохранёнными страницами thread_<ID>.html")
+    parser.add_argument("--only", nargs="+", metavar="SLUG", help="Обновить только эти законы (слаги из laws_index.json)")
+    args = parser.parse_args(argv)
+
+    cookie = (args.cookie or os.environ.get("GTA5RP_XF_USER", "")).strip().removeprefix("xf_user=")
+    if not cookie and not args.html_dir:
+        sys.stderr.write("Нужен cookie xf_user (--cookie или GTA5RP_XF_USER) либо --html-dir с сохранёнными страницами.\n")
         return 1
 
-    temp_dir = Path(tempfile.mkdtemp(prefix="mirror_sync_"))
-    print(f"Загрузка 34 тем законодательства во временный каталог {temp_dir}...")
-
-    success_count = 0
-    for tid in THREAD_SLUGS.keys():
-        out_f = temp_dir / f"thread_{tid}.html"
-        if download_thread_html(tid, cookie, out_f):
-            success_count += 1
-            print(f"  [OK] Загружена тема #{tid} ({THREAD_SLUGS[tid]})")
-        else:
-            print(f"  [FAIL] Не удалось загрузить тему #{tid} (возможно сессия недействительна)")
-
-    # Прецеденты
-    prec_f = temp_dir / "thread_3424533.html"
-    download_thread_html(3424533, cookie, prec_f)
-
-    print(f"\nЗагружено {success_count} из {len(THREAD_SLUGS)} тем.")
-    if success_count < 10:
-        sys.stderr.write("Слишком мало загруженных тем, возможно cookie истек. Обновление индекса прервано.\n")
+    laws = json.loads(INDEX_PATH.read_text(encoding="utf-8"))["laws"]
+    unknown = set(args.only or []) - set(laws)
+    if unknown:
+        sys.stderr.write(f"Неизвестные слаги: {', '.join(sorted(unknown))}. Список: search_mirror_law.py --list\n")
         return 1
 
-    print("Обновление файлов в references/laws/ и пересборка laws_index.json...")
-    # Здесь можно вызвать build_all() из сборщика
-    return 0
+    changed, failed = [], []
+    for slug, meta in laws.items():
+        if args.only and slug not in args.only:
+            continue
+        tid = meta["thread_id"]
+        try:
+            title, posts = fetch_posts(tid, cookie, args.html_dir, all_pages=slug == CHANGELOG_SLUG)
+        except Exception as exc:  # сеть, 403, нет файла — тему пропускаем, старый файл остаётся
+            failed.append(f"{slug} (#{tid}): {exc}")
+            continue
+        body = "\n\n".join(p.text for p in posts) if slug == CHANGELOG_SLUG else (posts[0].text if posts else "")
+        if len(body) < MIN_TEXT_LEN:
+            failed.append(f"{slug} (#{tid}): пустой или слишком короткий текст — истёк cookie?")
+            continue
+        path = LAWS_DIR / meta["filename"]
+        new = render(slug, tid, meta.get("title") or title, edition_of(title, posts[0]), body)
+        old = path.read_text(encoding="utf-8") if path.exists() else ""
+        # сравнение без строки счётчика: её всё равно перепишет build_laws_index
+        strip_count = lambda s: build_laws_index.COUNT_RE.sub(r"\g<1>0", s.replace("\r\n", "\n"))
+        if strip_count(old) != new:
+            path.write_text(new, encoding="utf-8", newline="\n")
+            changed.append(slug)
+        print(f"  [{'UPD' if slug in changed else ' OK'}] {slug} (#{tid})")
+
+    if changed:
+        print("\nПересборка laws_index.json:")
+        build_laws_index.main()
+        sys.path.insert(0, str(BASE_DIR.parent.parent / "scripts"))
+        import sync_copies
+        sync_copies.main([])
+
+    print(f"\nИзменено: {len(changed)}. Без изменений: {len(laws if not args.only else args.only) - len(changed) - len(failed)}. Ошибок: {len(failed)}.")
+    for f in failed:
+        print(f"  [FAIL] {f}")
+    if changed:
+        print("Дальше: git diff → поднять версию в plugin.json и .claude-plugin/plugin.json → commit → push.")
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8")
     sys.exit(main())

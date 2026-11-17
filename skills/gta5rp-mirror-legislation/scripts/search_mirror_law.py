@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI-утилита для быстрого офлайн-поиска по Законодательной базе, прецедентам ВС и OOC-правилам сервера GTA 5 RP Mirror.
+"""CLI-утилита для быстрого офлайн-поиска по Законодательной базе и OOC-правилам сервера GTA 5 RP Mirror.
 
 Использует локальный поисковый индекс laws_index.json и файлы в references/laws/.
 Не требует внешних библиотек (работает на чистом Python 3.10+).
@@ -11,7 +11,6 @@
   python search_mirror_law.py --law "взаимодействие" --article 8.1
   python search_mirror_law.py --query "неповиновение"
   python search_mirror_law.py --query "штурм титульного района" --ooc
-  python search_mirror_law.py --precedents --query "Пленум"
   python search_mirror_law.py --law УК --article 15.1 --json
 """
 
@@ -82,16 +81,14 @@ def search_article(index: dict, slug: str, article_num: str) -> list[dict]:
     # 1. Точное совпадение номера (включая повторы вида «14 (Раздел 6 …)»)
     results = [art for num, art in articles.items() if num == target or num.startswith(target + " (")]
 
-    # 2. Префиксное или похожее совпадение (например 17.6 и 17.6.1)
+    # 2. Только вложенные пункты (17.6 → 17.6.1). Подстрочные совпадения (7.1 в 17.15) не берём.
     if not results:
-        for num, art in articles.items():
-            if num.startswith(target) or target in num:
-                results.append(art)
+        results = [art for num, art in articles.items() if num.startswith(target + ".")]
 
     return results
 
 
-def search_text(index: dict, query: str, law_slug: str | None = None, include_ooc: bool = False, include_precedents: bool = False) -> list[dict]:
+def search_text(index: dict, query: str, law_slug: str | None = None, include_ooc: bool = False) -> list[dict]:
     q_low = query.strip().casefold()
     results = []
 
@@ -125,27 +122,6 @@ def search_text(index: dict, query: str, law_slug: str | None = None, include_oo
                     "score": score,
                 })
 
-    # Поиск по судебным прецедентам
-    if include_precedents or not law_slug:
-        prec_file = LAWS_DIR / "precedents_3424533.md"
-        if prec_file.exists():
-            prec_text = prec_file.read_text(encoding="utf-8")
-            if q_low in prec_text.casefold():
-                blocks = prec_text.split("### ")
-                for bl in blocks[1:]:
-                    if q_low in bl.casefold():
-                        first_line = bl.splitlines()[0]
-                        results.append({
-                            "source": "precedent",
-                            "law_slug": "precedents",
-                            "law_title": "Реестр прецедентов ВС Mirror (3424533)",
-                            "chapter": "Прецедентная практика ВС",
-                            "article": first_line,
-                            "title": first_line,
-                            "text": bl.strip(),
-                            "score": bl.casefold().count(q_low) * 2,
-                        })
-
     # Поиск по OOC-правилам
     if include_ooc or not law_slug:
         ooc_file = LAWS_DIR / "ooc_rules_mirror.md"
@@ -177,7 +153,6 @@ def main() -> int:
     parser.add_argument("--law", "-l", help="Название, слаг или аббревиатура закона (например, УК, ПК, СК, ЗОТ)")
     parser.add_argument("--article", "-a", help="Номер статьи (например, 17.6, 15.1, 8.1)")
     parser.add_argument("--query", "-q", help="Поисковая фраза или ключевые слова")
-    parser.add_argument("--precedents", action="store_true", help="Включить поиск по судебным прецедентам ВС")
     parser.add_argument("--ooc", action="store_true", help="Включить поиск по OOC-правилам и переопределениям Mirror")
     parser.add_argument("--json", action="store_true", help="Вывод результатов в формате JSON")
     args = parser.parse_args()
@@ -218,7 +193,7 @@ def main() -> int:
 
     # 2. Текстовый поиск
     if args.query:
-        matches = search_text(index, args.query, law_slug=slug, include_ooc=args.ooc, include_precedents=args.precedents)
+        matches = search_text(index, args.query, law_slug=slug, include_ooc=args.ooc)
         if not matches:
             print(f"Ничего не найдено по запросу: '{args.query}'")
             return 0
@@ -239,4 +214,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8")  # Windows по умолчанию пишет в cp1251 → кракозябры в пайпе
     sys.exit(main())
