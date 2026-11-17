@@ -135,8 +135,6 @@ def detect_document_type(title: str, first_post_text: str, breadcrumbs: list[dic
     elif "окружн" in b_low or "окружн" in body_low or "-dj" in body_low:
         jurisdiction = "Окружной суд (DJ)"
 
-    if "прецедент" in t_low or "прецедент" in b_low or "lep-" in body_low:
-        return "precedent (Судебный прецедент / Толкование НПА)", jurisdiction
     if "апелляци" in t_low or "апелляци" in b_low or "кассаци" in t_low:
         return "appeal (Апелляционная / Кассационная жалоба)", jurisdiction
     if re.search(r"\bформ[аы]\s+подачи\b|\bправила\s+подачи\b", t_low):
