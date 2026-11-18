@@ -46,7 +46,7 @@ description: 'Экспертная законодательная база, OOC-
 - **ЗОТ (Закрытые и охраняемые территории)**: `references/laws/closed_and_protected_areas.md`
 - **Взаимодействие силовых структур (ст. 8 задержания госников)**: `references/laws/law_enforcement_interaction.md`
 - **OOC-правила сервера Mirror**: `references/laws/ooc_rules_mirror.md`
-- **Сводный индекс всех 1 241 статей**: `references/laws/laws_index.json`
+- **Индекс НПА** (алиасы, редакции, число статей; тексты — только в md): `references/laws/laws_index.json`
 
 #### Б. В терминальных средах с поддержкой Python (Claude Code, Google Antigravity, Cursor)
 Запускай консольную утилиту поиска (0.05 сек, без галлюцинаций):
