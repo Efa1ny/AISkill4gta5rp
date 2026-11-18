@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """CLI-утилита для быстрого офлайн-поиска по Законодательной базе и OOC-правилам сервера GTA 5 RP Mirror.
 
-Использует локальный поисковый индекс laws_index.json и файлы в references/laws/.
+Метаданные законов (алиасы, редакции) берёт из laws_index.json, тексты статей — из references/laws/*.md
+(разбор на лету тем же парсером, что и build_laws_index.py).
 Не требует внешних библиотек (работает на чистом Python 3.10+).
 
 Примеры запуска:
@@ -21,6 +22,9 @@ import json
 from pathlib import Path
 import re
 import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_laws_index import load_articles  # noqa: E402
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 LAWS_DIR = BASE_DIR / "references" / "laws"
@@ -75,7 +79,7 @@ def search_article(index: dict, slug: str, article_num: str) -> list[dict]:
     if not law_meta:
         return []
 
-    articles = law_meta.get("articles", {})
+    articles = load_articles(law_meta)
     target = article_num.strip().rstrip(".*")
 
     # 1. Точное совпадение номера (включая повторы вида «14 (Раздел 6 …)»)
@@ -99,7 +103,7 @@ def search_text(index: dict, query: str, law_slug: str | None = None, include_oo
         meta = laws.get(slug)
         if not meta:
             continue
-        for num, art in meta.get("articles", {}).items():
+        for num, art in load_articles(meta).items():
             t_low = (art.get("title") or "").casefold()
             b_low = (art.get("text") or "").casefold()
             c_low = (art.get("chapter") or "").casefold()

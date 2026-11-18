@@ -74,12 +74,12 @@
     │       ├── procedure_code.md
     │       ├── court_code.md
     │       ├── ooc_rules_mirror.md
-    │       ├── laws_index.json            # Единый поисковый индекс (1862 статья)
+    │       ├── laws_index.json            # Метаданные НПА: алиасы, редакции, ID тем (тексты — в *.md)
     │       └── ... (все 34 закона)
     └── scripts/
         ├── search_mirror_law.py           # Офлайн-поиск по статьям и нормам
         ├── sync_mirror_laws.py            # Обновление законов с форума (см. «Обновление законодательной базы»)
-        └── build_laws_index.py            # Пересборка laws_index.json
+        └── build_laws_index.py            # Пересборка laws_index.json (--check — проверка для CI)
 ```
 
 ---
@@ -170,13 +170,13 @@ When user types /mirror-law or asks about Mirror laws:
 1. **Скачайте готовый архив**: [**`AISkill4gta5rp-main.zip`**](https://github.com/Efa1ny/AISkill4gta5rp/archive/refs/heads/main.zip).
 2. **Для Claude.ai (Claude Projects)**:
    - Создайте проект (например, *«Mirror Law Assistant»*).
-   - В блок **Project Knowledge** загрузите скачанный ZIP-архив целиком (либо распакованные файлы из папок `references/` и `references/laws/laws_index.json`).
+   - В блок **Project Knowledge** загрузите скачанный ZIP-архив целиком (либо распакованные файлы из папок `references/` и `references/laws/`).
    - В поле **Custom Instructions** скопируйте текст из [`CLAUDE.md`](./CLAUDE.md) или [`gta5rp-mirror-legislation/SKILL.md`](./gta5rp-mirror-legislation/SKILL.md).
 3. **Для ChatGPT (Custom GPTs / GPT Builder)**:
    - В настройках GPT перейдите во вкладку **Configure -> Knowledge**.
-   - Загрузите `laws_index.json` и markdown-файлы законов из папки `references/laws/`.
+   - Загрузите markdown-файлы законов и `laws_index.json` из папки `references/laws/`, а также `search_mirror_law.py` и `build_laws_index.py` из `scripts/`.
    - В поле **Instructions** вставьте содержимое [`AGENTS.md`](./AGENTS.md).
-   - Включите галочку **Code Interpreter** (чтобы ChatGPT мог писать Python-код для быстрого поиска по `laws_index.json`).
+   - Включите галочку **Code Interpreter** (чтобы ChatGPT запускал `search_mirror_law.py` для поиска статей по md-файлам).
 
 ---
 
@@ -247,7 +247,7 @@ When user types /mirror-law or asks about Mirror laws:
   2. Во вкладке **Configure**:
      - **Name**: `Mirror Law Assistant`
      - **Instructions**: вставьте содержимое [`AGENTS.md`](./AGENTS.md).
-     - **Knowledge**: загрузите файлы из папки `references/laws/` и `laws_index.json` (или архив `AISkill4gta5rp-Mirror.zip`).
+     - **Knowledge**: загрузите файлы из папки `references/laws/` и скрипты `search_mirror_law.py`, `build_laws_index.py` (или архив `AISkill4gta5rp-Mirror.zip`).
      - **Capabilities**: обязательно включите галочку **Code Interpreter & Data Analysis**.
   3. Сохраните GPT (**Save**).
   4. Откройте десктопное приложение **ChatGPT Desktop** на Windows или Mac — ваш созданный ассистент будет доступен в боковом меню в 1 клик.
@@ -260,7 +260,7 @@ When user types /mirror-law or asks about Mirror laws:
      Принимай команду /mirror-law как триггер для правового анализа.
      Ситуация: [опишите RP-ситуацию или вопрос]
      ```
-  3. ChatGPT Desktop через встроенный Code Interpreter распакует архив во временную песочницу, выполнит поиск по `laws_index.json` и предоставит квалификацию со ссылками на статьи.
+  3. ChatGPT Desktop через встроенный Code Interpreter распакует архив во временную песочницу, выполнит поиск скриптом `search_mirror_law.py` по md-файлам законов и предоставит квалификацию со ссылками на статьи.
 
 ---
 
@@ -302,7 +302,7 @@ When user types /mirror-law or asks about Mirror laws:
    Если форум отдаёт скрипту 403 — сохрани страницы тем из браузера как `thread_<ID темы>.html` и запусти с `--html-dir <папка>`.
    Скрипт перезаписывает только изменившиеся `references/laws/*.md`, пересобирает `laws_index.json`, поднимает patch-версию в обоих `plugin.json` и обновляет копии модулей. Тема, которая не скачалась, остаётся как была.
 2. Проверь `git diff`: номера статей, санкции, дату редакции в шапке файла.
-3. Если правил вручную `commands/` или `skills/` — синхронизируй дубли: `python scripts/sync_copies.py` (`--check` — только проверка).
+3. Если правил вручную `commands/` или `skills/` — синхронизируй дубли: `python scripts/sync_copies.py` (`--check` — только проверка). Правил md законов руками — пересобери индекс: `python skills/gta5rp-mirror-legislation/scripts/build_laws_index.py`. Всё это проверяет CI (`.github/workflows/check.yml`) на каждом PR.
 4. Закоммить и запушь в `main`. Если менял что-то руками без скрипта — сам подними `version` в `plugin.json` и `.claude-plugin/plugin.json`: маркетплейс Claude Code ставит обновление только при смене версии.
 
 ### Для пользователей

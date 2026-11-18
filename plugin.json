@@ -1,7 +1,7 @@
 {
   "name": "gta5rp-suite",
   "displayName": "GTA 5 RP Suite: Форум, Документы и Законодательство Mirror",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Комплексный плагин для работы с GTA 5 RP: навигация по форуму XenForo 2.3, юридический аудит исков/документов и полная законодательная база сервера Mirror (34 кодекса и закона, OOC-правила и игровые механики).",
   "author": "Efa1ny",
   "suggestedPrompts": [

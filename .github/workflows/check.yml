@@ -1,0 +1,48 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile scripts
+        run: python -m compileall -q skills scripts gta5rp-*
+
+      - name: Generated copies match skills/ and commands/
+        run: python scripts/sync_copies.py --check
+
+      - name: Law index matches references/laws/*.md
+        run: python skills/gta5rp-mirror-legislation/scripts/build_laws_index.py --check
+
+      - name: Plugin manifests share one version
+        run: |
+          a=$(python -c "import json; print(json.load(open('plugin.json'))['version'])")
+          b=$(python -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "plugin.json=$a .claude-plugin/plugin.json=$b"
+          test "$a" = "$b"
+
+      - name: Key articles resolve (CLAUDE.md)
+        run: |
+          S=skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py
+          python $S --law УК --article 15.5 | grep -q "Халатность"
+          python $S --law УК --article 17.6 | grep -q "Неповиновение законному требованию"
+          python $S --law УК --article 17.7 | grep -q "Отказ от оплаты штрафа"
+          python $S --law СК --article 15.11
+          python $S --law СК --article 17.3 | grep -q "72 часа"
+          python $S --law ПК --article 15.1
+          python $S --law ПК --article 1.4.1
+          python $S --law АК --article 5.2
+          python $S --law "взаимодействие" --article 8.1
+          python $S --ooc --query "штурм" | grep -q "OOC_RULE"
+          test "$(python $S --list | grep -c '|')" -ge 35
