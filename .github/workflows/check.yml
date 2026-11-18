@@ -46,3 +46,24 @@ jobs:
           python $S --law "взаимодействие" --article 8.1
           python $S --ooc --query "штурм" | grep -q "OOC_RULE"
           test "$(python $S --list | grep -c '|')" -ge 35
+
+      - name: Cross-reference checker
+        run: |
+          D=skills/gta5rp-mirror-legislation/scripts
+          python $D/check_law_refs.py
+          python -c "
+          import sys; sys.path.insert(0, '$D')
+          from check_law_refs import REF_RE
+          m = REF_RE.search('согласно статьями 37.6 и 37.8 настоящего Кодекса')
+          assert m and m['nums'] == '37.6 и 37.8', m
+          assert REF_RE.search('ст. 17.6 УК')['target'] == 'УК'
+          "
+
+      - name: Forum login page is reported, not parsed as empty thread
+        run: |
+          echo '<html data-template="login" data-logged-in="false"><body>Вход</body></html>' > /tmp/login.html
+          set +e
+          python skills/gta5rp-forum-navigation/scripts/extract_thread_content.py --file /tmp/login.html
+          code=$?
+          set -e
+          test "$code" -eq 2

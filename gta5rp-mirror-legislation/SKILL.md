@@ -13,7 +13,8 @@ description: 'Экспертная законодательная база, OOC-
 
 Скилл и связанные с ним правила активируются при отправке любой из команд:
 - **`/mirror-law <статья / описание ситуации>`** — дословная цитата статьи или правовой разбор ситуации;
-- **`/mirror-on [judge | prosecutor]`** — постоянный правовой режим на весь чат (`/mirror-off` — выключить);
+- **`/mirror-on`** — постоянный правовой режим на весь чат (`/mirror-off` — выключить);
+- **`/mirror-review <закон, статья или тема>`** — разбор самих законов: коллизии, пробелы, неясные формулировки, битые отсылки (`check_law_refs.py`), проект поправок и черновик законодательной инициативы для обсуждения;
 - При упоминании в запросе: *«законы Mirror», «сервер Миррор», «статьи УК Mirror», «задержание на Мирроре», «иск в суд Mirror»*.
 
 > [!TIP]
@@ -55,6 +56,7 @@ python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law УК --art
 python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law ПК --article 15.1
 python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law "взаимодействие" --article 8.1
 python "gta5rp-mirror-legislation/scripts/search_mirror_law.py" --law ПК --article 1.4.1
+python "gta5rp-mirror-legislation/scripts/check_law_refs.py" --law СК   # битые отсылки между статьями
 ```
 
 ---

@@ -26,7 +26,9 @@ import re
 import subprocess
 import sys
 from urllib.parse import urljoin, urlparse
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+import shutil
 
 FORUM_ORIGIN = "https://forum.gta5rp.com"
 DEFAULT_USER_AGENT = (
@@ -116,11 +118,37 @@ def clean_html_text(raw: str) -> str:
     return unescape(re.sub(r"\s+", " ", text).strip())
 
 
-def fetch_url(url: str, timeout: int = 20, cookie: str | None = None) -> str:
-    cookie_val = (cookie or os.environ.get("GTA5RP_XF_USER", "")).strip()
-    if cookie_val.startswith("xf_user="):
-        cookie_val = cookie_val.split("=", 1)[1].strip()
+class ForumAuthRequired(RuntimeError):
+    """Форум отдал страницу входа: раздел закрыт для гостей или cookie xf_user истёк."""
 
+
+AUTH_HINT = (
+    "Форум требует входа: суды, прокуратура и законодательная база закрыты для гостей "
+    "(без входа виден только раздел «Дополнительные правила сервера»).\n"
+    "Варианты:\n"
+    "  1) cookie xf_user из браузера (DevTools → Application → Cookies → forum.gta5rp.com → xf_user): "
+    "переменная окружения GTA5RP_XF_USER или --cookie;\n"
+    "  2) сохранить страницу темы из браузера (Ctrl+S, «Веб-страница, только HTML») и передать --file <путь>;\n"
+    "  3) скопировать текст темы в чат."
+)
+
+
+def _cookie_value(cookie: str | None) -> str:
+    val = (cookie or os.environ.get("GTA5RP_XF_USER", "")).strip()
+    return val.split("=", 1)[1].strip() if val.startswith("xf_user=") else val
+
+
+def ensure_not_login_page(html: str, had_cookie: bool = False) -> str:
+    """XenForo отдаёт закрытую тему как шаблон login (HTTP 403) — не путать с пустой темой."""
+    if 'data-template="login"' in html:
+        raise ForumAuthRequired(
+            "cookie xf_user не принят (истёк или неверный) — возьми свежий из браузера." if had_cookie else AUTH_HINT
+        )
+    return html
+
+
+def fetch_url(url: str, timeout: int = 20, cookie: str | None = None) -> str:
+    cookie_val = _cookie_value(cookie)
     headers = {
         "User-Agent": DEFAULT_USER_AGENT,
         "Accept-Language": "ru,en;q=0.9",
@@ -129,19 +157,36 @@ def fetch_url(url: str, timeout: int = 20, cookie: str | None = None) -> str:
         headers["Cookie"] = f"xf_user={cookie_val}"
 
     try:
-        req = Request(url, headers=headers)
-        with urlopen(req, timeout=timeout) as response:
+        with urlopen(Request(url, headers=headers), timeout=timeout) as response:
             charset = response.headers.get_content_charset() or "utf-8"
-            return response.read().decode(charset, errors="replace")
-    except Exception:
-        cmd = ["curl.exe", "-sSL", "-A", DEFAULT_USER_AGENT]
+            html = response.read().decode(charset, errors="replace")
+    except HTTPError as exc:  # ответ сервера (403 = страница входа) — curl тут не поможет
+        body = exc.read().decode("utf-8", errors="replace")
+        ensure_not_login_page(body, bool(cookie_val))
+        raise
+    except (URLError, OSError):  # сеть/SSL у urllib — пробуем системный curl
+        curl = shutil.which("curl") or shutil.which("curl.exe")
+        if not curl:
+            raise
+        cmd = [curl, "-sSLf", "-A", DEFAULT_USER_AGENT]
         if cookie_val:
             cmd.extend(["-b", f"xf_user={cookie_val}"])
-        cmd.append(url)
-        res = subprocess.run(cmd, capture_output=True, timeout=timeout)
-        if res.returncode == 0 and res.stdout:
-            return res.stdout.decode("utf-8", errors="replace")
-        raise
+        res = subprocess.run([*cmd, url], capture_output=True, timeout=timeout)
+        if res.returncode != 0:
+            if res.returncode == 22:  # curl -f: HTTP >= 400
+                raise ForumAuthRequired(AUTH_HINT)
+            raise
+        html = res.stdout.decode("utf-8", errors="replace")
+    return ensure_not_login_page(html, bool(cookie_val))
+
+
+def load_html(url: str | None, file: str | None, cookie: str | None) -> tuple[str, str, str]:
+    """HTML темы/раздела из --file или по URL → (html, source, base_url)."""
+    if file:
+        path = Path(file)
+        html = ensure_not_login_page(path.read_text(encoding="utf-8", errors="replace"))
+        return html, str(path.resolve()), FORUM_ORIGIN
+    return fetch_url(url, cookie=cookie), url, url
 
 
 def classify_url(url: str) -> tuple[str, str | None]:
@@ -530,15 +575,11 @@ def main(argv: list[str] | None = None) -> int:
     if not args.url and not args.file:
         parser.error("Укажите URL темы или флаг --file <путь_к_html>")
 
-    if args.file:
-        path = Path(args.file)
-        html = path.read_text(encoding="utf-8")
-        source = str(path.resolve())
-        base_url = FORUM_ORIGIN
-    else:
-        html = fetch_url(args.url, cookie=args.cookie)
-        source = args.url
-        base_url = args.url
+    try:
+        html, source, base_url = load_html(args.url, args.file, args.cookie)
+    except ForumAuthRequired as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 2
 
     result = parse_thread_html(html, source=source, base_url=base_url)
     if args.json:
