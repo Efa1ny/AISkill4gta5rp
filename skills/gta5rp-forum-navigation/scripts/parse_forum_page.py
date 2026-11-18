@@ -20,20 +20,15 @@ import argparse
 from dataclasses import asdict, dataclass
 from html import unescape
 import json
-import os
 from pathlib import Path
 import re
-import subprocess
 import sys
 from urllib.parse import urljoin
-from urllib.request import Request, urlopen
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from extract_thread_content import ForumAuthRequired, fetch_url, load_html  # noqa: E402,F401
 
 FORUM_ORIGIN = "https://forum.gta5rp.com"
-DEFAULT_USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-)
-
 TAG_RE = re.compile(r"<[^>]+>")
 BREADCRUMB_BLOCK_RE = re.compile(
     r'<ul class="p-breadcrumbs[^"]*"[^>]*>(.*?)</ul>',
@@ -140,32 +135,6 @@ def clean_html_text(raw: str) -> str:
     return unescape(re.sub(r"\s+", " ", text).strip())
 
 
-def fetch_url(url: str, timeout: int = 20, cookie: str | None = None) -> str:
-    cookie_val = (cookie or os.environ.get("GTA5RP_XF_USER", "")).strip()
-    if cookie_val.startswith("xf_user="):
-        cookie_val = cookie_val.split("=", 1)[1].strip()
-
-    headers = {
-        "User-Agent": DEFAULT_USER_AGENT,
-        "Accept-Language": "ru,en;q=0.9",
-    }
-    if cookie_val:
-        headers["Cookie"] = f"xf_user={cookie_val}"
-
-    try:
-        req = Request(url, headers=headers)
-        with urlopen(req, timeout=timeout) as response:
-            charset = response.headers.get_content_charset() or "utf-8"
-            return response.read().decode(charset, errors="replace")
-    except Exception:
-        cmd = ["curl.exe", "-sSL", "-A", DEFAULT_USER_AGENT]
-        if cookie_val:
-            cmd.extend(["-b", f"xf_user={cookie_val}"])
-        cmd.append(url)
-        res = subprocess.run(cmd, capture_output=True, timeout=timeout)
-        if res.returncode == 0 and res.stdout:
-            return res.stdout.decode("utf-8", errors="replace")
-        raise
 
 
 def parse_breadcrumbs(html: str, base_url: str) -> list[BreadcrumbItem]:
@@ -362,15 +331,11 @@ def main(argv: list[str] | None = None) -> int:
     if not args.url and not args.file:
         parser.error("Укажите URL раздела или флаг --file <путь_к_html>")
 
-    if args.file:
-        path = Path(args.file)
-        html = path.read_text(encoding="utf-8")
-        source = str(path.resolve())
-        base_url = FORUM_ORIGIN
-    else:
-        html = fetch_url(args.url, cookie=args.cookie)
-        source = args.url
-        base_url = args.url
+    try:
+        html, source, base_url = load_html(args.url, args.file, args.cookie)
+    except ForumAuthRequired as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 2
 
     result = parse_forum_html(html, source=source, base_url=base_url)
     if args.json:

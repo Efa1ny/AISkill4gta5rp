@@ -41,6 +41,8 @@ _spec.loader.exec_module(_nav_mod)
 
 FORUM_ORIGIN = _nav_mod.FORUM_ORIGIN
 fetch_url = _nav_mod.fetch_url
+load_html = _nav_mod.load_html
+ForumAuthRequired = _nav_mod.ForumAuthRequired
 parse_thread_html = _nav_mod.parse_thread_html
 
 NUMBER_RE = re.compile(r"(?:№|N|#)\s*(\d+)", re.IGNORECASE)
@@ -456,15 +458,11 @@ def main(argv: list[str] | None = None) -> int:
     if not args.url and not args.file:
         parser.error("Укажите URL темы или флаг --file <путь_к_html>")
 
-    if args.file:
-        path = Path(args.file)
-        html = path.read_text(encoding="utf-8")
-        source = str(path.resolve())
-        base_url = FORUM_ORIGIN
-    else:
-        html = fetch_url(args.url, cookie=args.cookie)
-        source = args.url
-        base_url = args.url
+    try:
+        html, source, base_url = load_html(args.url, args.file, args.cookie)
+    except ForumAuthRequired as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 2
 
     thread = parse_thread_html(html, source=source, base_url=base_url)
     analysis = analyze_thread(thread)
