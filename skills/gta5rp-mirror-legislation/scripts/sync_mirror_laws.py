@@ -34,6 +34,8 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 BASE_DIR = SCRIPTS_DIR.parent
 LAWS_DIR = BASE_DIR / "references" / "laws"
 INDEX_PATH = LAWS_DIR / "laws_index.json"
+# корень репозитория: скрипт лежит и в skills/<модуль>/, и в копии <модуль>/ в корне
+REPO_ROOT = next((p for p in BASE_DIR.parents if (p / ".claude-plugin").is_dir()), BASE_DIR.parent.parent)
 sys.path.insert(0, str(BASE_DIR.parent / "gta5rp-forum-navigation" / "scripts"))
 sys.path.insert(0, str(SCRIPTS_DIR))
 import build_laws_index  # noqa: E402
@@ -93,7 +95,7 @@ def render(slug: str, thread_id: int, old_title: str, edition: str | None, body:
 
 def bump_patch_version() -> str | None:
     """1.2.0 → 1.2.1 в обоих манифестах: маркетплейс Claude Code обновляет плагин только при смене version."""
-    root = BASE_DIR.parent.parent
+    root = REPO_ROOT
     new_version = None
     for manifest in (root / "plugin.json", root / ".claude-plugin" / "plugin.json"):
         if not manifest.exists():
@@ -155,7 +157,7 @@ def main(argv: list[str] | None = None) -> int:
         version = bump_patch_version()  # до sync_copies не нужно: манифесты лежат в корне, а не в модулях
         if version:
             print(f"Версия плагина: {version}")
-        sys.path.insert(0, str(BASE_DIR.parent.parent / "scripts"))
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
         import sync_copies
         sync_copies.main([])
 

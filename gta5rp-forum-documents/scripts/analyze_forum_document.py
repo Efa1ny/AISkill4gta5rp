@@ -6,7 +6,7 @@
 2. Извлекает реквизиты: номер заявления/иска, номер дела (SJ/FJ/DJ), номера ордеров (IA, AS, ASC, RI, SA).
 3. Извлекает всех участников, упомянутые Static ID / номера паспортов / жетонов и статьи кодексов (УК, АК, ПК, СК, ТК, ЭК).
 4. Проверяет Пост #1 по чек-листу допустимости (наличие ссылок на паспорт, госпошлину, доказательства, проверка на редактирование после ответа судьи и поиск MG / OOC-слов).
-5. Строит хронологию движения дела по всем постам темы и проверяет соблюдение сроков (SLA 24ч на принятие, 72ч на расследование, 96ч на рассмотрение).
+5. Строит хронологию движения дела по всем постам темы и проверяет соблюдение сроков Судебного кодекса (24ч на определение — ст. 17.9, 14 дней на рассмотрение — ст. 17.11).
 
 Примеры запуска:
   python analyze_forum_document.py "https://forum.gta5rp.com/threads/iskovoye-zayavleniye-no248.3418114/"
@@ -102,7 +102,7 @@ class SlaMetrics:
     hours_to_first_response: float | None
     first_response_overdue_24h: bool
     total_hours_elapsed: float | None
-    resolution_overdue_96h: bool
+    resolution_overdue_14d: bool
 
 
 @dataclass
@@ -130,10 +130,11 @@ def detect_document_type(title: str, first_post_text: str, breadcrumbs: list[dic
     jurisdiction = None
     if "верховн" in b_low or "верховн" in body_low or "-sj" in body_low:
         jurisdiction = "Верховный суд (SJ)"
-    elif "федеральн" in b_low or "федеральн" in body_low or "-fj" in body_low:
-        jurisdiction = "Федеральный суд (FJ)"
     elif "окружн" in b_low or "окружн" in body_low or "-dj" in body_low:
         jurisdiction = "Окружной суд (DJ)"
+    elif "федеральн" in b_low or "федеральн" in body_low or "-fj" in body_low:
+        # Федерального суда в СК больше нет; FJ встречается в архивных делах
+        jurisdiction = "Федеральный суд (FJ, архив; сейчас — Окружной суд)"
 
     if "апелляци" in t_low or "апелляци" in b_low or "кассаци" in t_low:
         return "appeal (Апелляционная / Кассационная жалоба)", jurisdiction
@@ -337,10 +338,10 @@ def analyze_thread(thread) -> DocumentAnalysisResult:
         overdue_24h = hours_to_first >= 24.0
 
     total_hours: float | None = None
-    overdue_96h = False
+    overdue_14d = False
     if start_dt and last_dt:
         total_hours = round((last_dt - start_dt).total_seconds() / 3600.0, 2)
-        overdue_96h = total_hours >= 96.0
+        overdue_14d = total_hours >= 14 * 24.0  # предельный срок рассмотрения, ст. 17.11 СК (судья может продлить)
 
     sla = SlaMetrics(
         started_at=first_post.published_at if first_post else None,
@@ -348,7 +349,7 @@ def analyze_thread(thread) -> DocumentAnalysisResult:
         hours_to_first_response=hours_to_first,
         first_response_overdue_24h=overdue_24h,
         total_hours_elapsed=total_hours,
-        resolution_overdue_96h=overdue_96h,
+        resolution_overdue_14d=overdue_14d,
     )
 
     return DocumentAnalysisResult(
@@ -425,7 +426,7 @@ def format_markdown(res: DocumentAnalysisResult) -> str:
     if res.sla.total_hours_elapsed is not None:
         lines.append(
             f"- **Длительность между первым и последним постом**: `{res.sla.total_hours_elapsed} ч.` "
-            f"({'🟡 Свыше 96ч' if res.sla.resolution_overdue_96h else '🟢 В пределах 96ч'})"
+            f"({'🟡 Свыше 14 дней (ст. 17.11 СК) — проверь продление' if res.sla.resolution_overdue_14d else '🟢 В пределах 14 дней'})"
         )
 
     lines.append(f"\n## Хронология движения дела ({len(res.timeline)} постов)")
