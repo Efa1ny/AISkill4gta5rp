@@ -17,7 +17,7 @@ This repository provides agentic tools, skills, and the full legislative and jud
 ## Modules Overview
 - `skills/gta5rp-forum-navigation/`: XenForo 2.3 parser, hidden spoiler/quote expander, media extractor (Imgur, Yapx, YouTube, Google Docs/Sheets).
 - `skills/gta5rp-forum-documents/`: Court claim audit, SLA tracker (court code: 24h ruling, 72h/48h limitation, 14-day review), fee/passport checks, MetaGaming detector.
-- `skills/gta5rp-mirror-legislation/`: Complete Mirror legislation (34 laws/codes), OOC overrides, game mechanics.
+- `skills/gta5rp-mirror-legislation/`: Complete Mirror legislation (35 laws/codes), OOC overrides, game mechanics.
 
 ## Quick CLI Search (Zero Hallucination)
 Always verify article numbers and sanctions before answering:

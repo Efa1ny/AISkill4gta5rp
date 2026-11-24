@@ -8,7 +8,7 @@ argument-hint: "<статья (например, 17.6 УК) или описан�
 
 ### ⛔ Источники
 1. Не используй веб-поиск и не открывай `forum.gta5rp.com` (403 Forbidden).
-2. Все 34 НПА сервера Mirror — в `skills/gta5rp-mirror-legislation/references/laws/` (в песочнице Claude Desktop — под `/mnt/skills`): УК `criminal_code.md`, АК `administrative_code.md`, ПК `procedure_code.md`, СК `court_code.md`, ДК `traffic_code.md`, ЗОТ `closed_and_protected_areas.md`, взаимодействие силовых структур `law_enforcement_interaction.md`, OOC-правила `ooc_rules_mirror.md`, индекс `laws_index.json`.
+2. Все 35 НПА сервера Mirror — в `skills/gta5rp-mirror-legislation/references/laws/` (в песочнице Claude Desktop — под `/mnt/skills`): УК `criminal_code.md`, АК `administrative_code.md`, ПК `procedure_code.md`, СК `court_code.md`, ДК `traffic_code.md`, ЗОТ `closed_and_protected_areas.md`, взаимодействие силовых структур `law_enforcement_interaction.md`, OOC-правила `ooc_rules_mirror.md`, индекс `laws_index.json`.
 3. Номер статьи всегда сверяй скриптом:
    `python3 "$(find /mnt/skills -name search_mirror_law.py | head -1)" --law <УК|АК|ПК|СК|ДК|…> --article <номер>`
    Поиск по тексту — `--query "<фраза>"`, по OOC-правилам — `--ooc --query "<фраза>"`, список НПА — `--list`.
