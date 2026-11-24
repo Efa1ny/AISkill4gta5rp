@@ -1,26 +1,26 @@
 {
   "server": "Mirror",
   "section": "2181",
-  "updated_at": "2026-11-18",
+  "updated_at": "2026-11-24",
   "laws": {
     "constitution": {
       "thread_id": 3423983,
-      "title": "Конституция Штата (Редакция от 14.11.2026)",
+      "title": "Конституция Штата (Редакция от 22.11.2026)",
       "filename": "constitution.md",
-      "edition_date": "14.11.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "конституция",
         "конституция са",
         "к са",
         "к"
       ],
-      "articles_count": 112
+      "articles_count": 162
     },
     "criminal_code": {
       "thread_id": 3424268,
-      "title": "Уголовный Кодекс (Редакция от 14.11.2026)",
+      "title": "Уголовный Кодекс (Редакция от 22.11.2026)",
       "filename": "criminal_code.md",
-      "edition_date": "14.11.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "ук",
         "ук са",
@@ -31,29 +31,29 @@
     },
     "procedure_code": {
       "thread_id": 3424266,
-      "title": "Процессуальный Кодекс (Редакция от 14.11.2026)",
+      "title": "Процессуальный Кодекс (Редакция от 23.11.2026)",
       "filename": "procedure_code.md",
-      "edition_date": "14.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "пк",
         "пк са",
         "процессуальный кодекс",
         "процессуальный"
       ],
-      "articles_count": 117
+      "articles_count": 125
     },
     "court_code": {
       "thread_id": 3424313,
-      "title": "Судебный кодекс (Редакция от 14.11.2026)",
+      "title": "Судебный кодекс (Редакция от 22.11.2026)",
       "filename": "court_code.md",
-      "edition_date": "14.11.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "ск",
         "ск са",
         "судебный кодекс",
         "судебный"
       ],
-      "articles_count": 341
+      "articles_count": 344
     },
     "administrative_code": {
       "thread_id": 3424267,
@@ -83,9 +83,9 @@
     },
     "labor_code": {
       "thread_id": 3423982,
-      "title": "Трудовой Кодекс (Редакция от 08.11.2026)",
+      "title": "Трудовой Кодекс (Редакция от 23.11.2026)",
       "filename": "labor_code.md",
-      "edition_date": "08.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "тк",
         "тк са",
@@ -109,9 +109,9 @@
     },
     "warrant_system": {
       "thread_id": 3423979,
-      "title": "Закон о системе ордеров (Редакция от 08.11.2026)",
+      "title": "Закон о системе ордеров (Редакция от 23.11.2026)",
       "filename": "warrant_system.md",
-      "edition_date": "08.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "ордера",
         "система ордеров",
@@ -122,9 +122,9 @@
     },
     "closed_and_protected_areas": {
       "thread_id": 3423971,
-      "title": "Закон о закрытых и охраняемых территориях (Редакция от 14.11.2026)",
+      "title": "Закон о закрытых и охраняемых территориях (Редакция от 23.11.2026)",
       "filename": "closed_and_protected_areas.md",
-      "edition_date": "14.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "зот",
         "закон о зот",
@@ -149,9 +149,9 @@
     },
     "secret_service_usss": {
       "thread_id": 3423962,
-      "title": "Закон о United States Secret Service (Редакция от 02.11.2026)",
+      "title": "Закон о United States Secret Service (Редакция от 22.11.2026)",
       "filename": "secret_service_usss.md",
-      "edition_date": "02.11.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "usss",
         "юссс",
@@ -162,22 +162,22 @@
     },
     "state_officials_status": {
       "thread_id": 3423960,
-      "title": "Закон о правовом статусе государственных служащих (Редакция от 11.11.2026)",
+      "title": "Закон о правовом статусе государственных служащих (Редакция от 22.11.2026)",
       "filename": "state_officials_status.md",
-      "edition_date": "11.11.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "статус",
         "неприкосновенность",
         "госслужащие",
         "иммунитет"
       ],
-      "articles_count": 39
+      "articles_count": 36
     },
     "law_enforcement_interaction": {
       "thread_id": 3423973,
-      "title": "Закон о взаимодействии силовых структур (Редакция от 02.11.2026)",
+      "title": "Закон о взаимодействии силовых структур (Редакция от 22.11.2026)",
       "filename": "law_enforcement_interaction.md",
-      "edition_date": "02.11.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "взаимодействие",
         "взаимодействие силовых",
@@ -188,9 +188,9 @@
     },
     "state_secrets": {
       "thread_id": 3423959,
-      "title": "Закон о государственной и служебной тайне (Редакция от 08.11.2026)",
+      "title": "Закон о государственной и служебной тайне (Редакция от 23.11.2026)",
       "filename": "state_secrets.md",
-      "edition_date": "08.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "гостайна",
         "служебная тайна",
@@ -282,9 +282,9 @@
     },
     "ems": {
       "thread_id": 3423976,
-      "title": "Закон о Emergency Medical Service (Редакция от 02.11.2026)",
+      "title": "Закон о Emergency Medical Service (Редакция от 23.11.2026)",
       "filename": "ems.md",
-      "edition_date": "02.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "емс",
         "ems",
@@ -308,15 +308,15 @@
     },
     "government": {
       "thread_id": 3423970,
-      "title": "Закон о Правительстве (Редакция от 30.10.2026)",
+      "title": "Закон о Правительстве (Редакция от 22.11.2026)",
       "filename": "government.md",
-      "edition_date": "30.10.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "правительство",
         "закон о правительстве",
         "губернатор"
       ],
-      "articles_count": 179
+      "articles_count": 52
     },
     "document_flow": {
       "thread_id": 3425164,
@@ -331,9 +331,9 @@
     },
     "legislative_initiative": {
       "thread_id": 3424765,
-      "title": "Положение о законодательной инициативе (Редакция от 07.10.2026)",
+      "title": "Положение о законодательной инициативе (Редакция от 22.11.2026)",
       "filename": "legislative_initiative.md",
-      "edition_date": "07.10.2026",
+      "edition_date": "22.11.2026",
       "aliases": [
         "законодательная инициатива"
       ],
@@ -341,9 +341,9 @@
     },
     "medical_inspections": {
       "thread_id": 3423978,
-      "title": "Положение о медицинских проверках государственных организаций (Редакция от 02.11.2026)",
+      "title": "Положение о медицинских проверках государственных организаций (Редакция от 23.11.2026)",
       "filename": "medical_inspections.md",
-      "edition_date": "02.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "медицинские проверки"
       ],
@@ -361,22 +361,22 @@
     },
     "special_regimes": {
       "thread_id": 3423968,
-      "title": "Закон об особых режимах и положениях (Редакция от 02.11.2026)",
+      "title": "Закон об особых режимах и положениях (Редакция от 23.11.2026)",
       "filename": "special_regimes.md",
-      "edition_date": "02.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "чп",
         "вп",
         "особые режимы",
         "военное положение"
       ],
-      "articles_count": 36
+      "articles_count": 37
     },
     "entrepreneurship": {
       "thread_id": 3423977,
-      "title": "Закон о предпринимательской деятельности (Редакция от 02.11.2026)",
+      "title": "Закон о предпринимательской деятельности (Редакция от 23.11.2026)",
       "filename": "entrepreneurship.md",
-      "edition_date": "02.11.2026",
+      "edition_date": "23.11.2026",
       "aliases": [
         "предпринимательство",
         "бизнес"

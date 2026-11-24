@@ -33,7 +33,7 @@ python skills/gta5rp-mirror-legislation/scripts/search_mirror_law.py --ooc --que
 
 ## Key Server Rules & Conventions
 1. OOC server rules always override IC legislation in case of conflict.
-2. Cite only statutes from the local base. Art. 17.6 УК: lawful demand (ПК 1.4) given twice, reasonable time (ПК 1.5), future-directed demands are unlawful, the officer proves lawfulness (ПК 1.4.1); failing a demand to stop an administrative offence is АК 5.2, not 17.6; refusing to remove a mask is 17.6 at once (note to АК 6.7). Art. 17.7 УК: ignoring the ticket for 20s (the article's own note).
+2. Cite only statutes from the local base. Art. 17.6 УК: lawful demand (ПК 1.4; future-directed demands are unlawful) repeated once with a warning (ПК 1.4.2), reasonable time (ПК 1.5; immediate if danger), the officer proves lawfulness (ПК 1.4.1); failing a demand to stop an administrative offence is АК 5.2, not 17.6; refusing to remove a mask is 17.6 at once (note to АК 6.7). Art. 17.7 УК: ignoring the ticket for 20s (the article's own note).
 3. State employees on duty can only be detained for violent/felony crimes explicitly listed in art. 8 of Law on Law Enforcement Interaction (never on the spot for art. 15.1 / 15.6).
 4. Only DB (LSPD/LSSD) and CID (FIB) may write raid case files. Only MP (NG) may patrol for deserters.
 5. In-game mechanics: Handcuffs (`X`), Escort (`Z`), WANTED tag in Green Zones without mask, SP secret identity, 180° bodycam from 24/7, virtual parking protection.
