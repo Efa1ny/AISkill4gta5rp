@@ -132,6 +132,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.only and slug not in args.only:
             continue
         tid = meta["thread_id"]
+        if not tid:  # закон добавлен вручную, темы на форуме нет: файл не трогаем
+            print(f"  [SKIP] {slug}: нет ID темы")
+            continue
         try:
             title, posts = fetch_posts(tid, cookie, args.html_dir, all_pages=slug == CHANGELOG_SLUG)
         except Exception as exc:  # сеть, 403, нет файла — тему пропускаем, старый файл остаётся
