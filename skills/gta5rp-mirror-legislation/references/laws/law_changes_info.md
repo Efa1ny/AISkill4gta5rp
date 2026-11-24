@@ -111,3 +111,64 @@ R.Arthas
 г. Лос-Сантос, Штат Сан-Андреас
 
 14 ноября 2026 года
+
+|
+
+Изменения в Законодательной Базе от 22.11.2026
+
+Источник: https://forum.gta5rp.com/threads/kantselyariya-verkhovnogo-suda-shtata-san-andreas.3424537/post-10147985
+
+• Новая Конституция (https://docs.google.com/document/d/1rhja6pc-zkBL63Gu__aW6izNjAEJwHHmd-GJryCIMpE)
+
+• Новый Закон о правовом статусе государственных служащих (https://docs.google.com/document/d/14pQnIIwKyCXW4IuL_FSkm0oCQ1uwv0tgW-Im-wxyWnk)
+
+• Новый закон о Правительстве (https://docs.google.com/document/d/1jk-R2i2UM37GyODnoab5-8sF8bqEDunc4legZP-OUEc)
+
+• Изменения в Судебный кодекс (https://docs.google.com/document/d/1Tuhg1gYNkp3P84Xuqe5MQCo0VSa9vOW1tJXkZnHur2E)
+
+• Изменения в Трудовой кодекс (https://docs.google.com/document/d/1fIrezrVPKAjhTmmBly0rtDFt8Ln2LEuBO8p9pTB5rQE)
+
+• Изменения в Процессуальный кодекс (https://docs.google.com/document/d/1gSPm26WBfFcMM5Spy48ZUaXN3WdYdRxNb_8oT1XqiAc)
+
+• Изменения в Уголовный кодекс (https://docs.google.com/document/d/1I5mC73DTa2PSnvwXaWLnMD1SChqf5rBW1_d2MW78kqE)
+
+• Изменения в закон об особых режимах и положениях (https://docs.google.com/document/d/1KZJz9XmbF7_WmigKlBxpRFIO7hMuZJ55MZ_Nr4ATIgA)
+
+• Изменения в Закон о системе ордеров (https://docs.google.com/document/d/1Lvc3dSbre8rKsh98POZZokeHq7PjM7kwiNprd9TXru8)
+
+• Изменения в Закон о United States Secret Service (https://docs.google.com/document/d/1qNbrQNQB-6SRtr2f3JKns1hZnaqc5ZysEzHvh9Oj2pQ)
+
+• Изменения в закон о взаимодействии силовых структур (https://docs.google.com/document/d/1v32naAgVWUci4mdOcwnM8KuUtbVnWFjdpJX6_GUJFEM)
+
+• Изменение в положение о законодательной инициативе (https://docs.google.com/document/d/1k8-VDnXoBOEDSYLwv6wbJmcGmnmXJGvAGgxlo_H8aj0)
+
+Три первых акта заменены целиком, остальные применены как «Было/Стало».
+
+
+|
+
+Изменения в Законодательной Базе от 23.11.2026
+
+Источник: https://forum.gta5rp.com/threads/postanovleniya-ogp.3424507/post-10148376
+
+• Трудовой кодекс (https://docs.google.com/document/d/1YcYHYGXJ8asIhjPAoicDMDiuQnabatoP)
+
+• Процессуальный Кодекс (https://docs.google.com/document/d/1rnR1RwItNtqSSlfENei6JlP7f9dBUe5u)
+
+• Положение о медицинских проверках государственных организаций (https://docs.google.com/document/d/18VXen3C2a0oUPDKXuMjzet-z4XMws65L)
+
+• Положение о выдачи государственных лицензий (https://docs.google.com/document/d/1dXVdV5t8hPfyN820Enc-NK64djlE3p_Q)
+
+• Закон о Emergency Medical Service (https://docs.google.com/document/d/12w8kP-yCrqvHjdrgILY_RCEnOP7ym8tB)
+
+• Закон об особых режимах и положениях (https://docs.google.com/document/d/1AOpJ6itI0BdghlAk6ZL6cZ1jtHyGVjFR)
+
+• Закон о предпринимательской деятельности (https://docs.google.com/document/d/1cAqLWuWPv2RBfJJfmZSzlBkLZiUNMC01)
+
+• Закон о закрытых и охраняемых территориях (https://docs.google.com/document/d/1y3J22E_XMjTcQOmmx45TeHHc1LSdLRCC)
+
+• Закон о государственной и служебной тайне (https://docs.google.com/document/d/1MQCLpI0RaHgHjxrcUyfH1e6Qqh4vO_Ia)
+
+• Закон о системе ордеров (https://docs.google.com/document/d/1TnzSAf_TeY8kUEuIuesqjARQdSSCl8Tz)
+
+Адаптация под новый закон о Правительстве (Министерство Здравоохранения вместо Социального Развития, Министерство Финансов, Министерство Труда). Положение о выдаче государственных лицензий в базе пока отсутствует: в источнике только выдержка (п. 1.4).
