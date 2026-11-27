@@ -172,3 +172,25 @@ R.Arthas
 • Закон о системе ордеров (https://docs.google.com/document/d/1TnzSAf_TeY8kUEuIuesqjARQdSSCl8Tz)
 
 Адаптация под новый закон о Правительстве (Министерство Здравоохранения вместо Социального Развития, Министерство Финансов, Министерство Труда). Положение о выдаче государственных лицензий в базе пока отсутствует: в источнике только выдержка (п. 1.4).
+
+|
+
+Изменения в Законодательной Базе от 27.11.2026
+
+Источник: Google Docs с правками (дата документов не указана, редакция в базе проставлена по дате внесения).
+
+• Изменения в Судебный кодекс (https://docs.google.com/document/d/1jzRiXTpJPXAy92GoGZ5d7s1moyOSl3BbjcgnL04C074)
+
+• Изменение в Уголовный кодекс (https://docs.google.com/document/d/1potXQi_9SfxngzBxTJIvkUF-Q9dXfaF7OUD1oBYAxLc)
+
+• Изменения в закон о взаимодействии силовых структур (переименован в Закон о взаимодействии государственных структур) (https://docs.google.com/document/d/1A8Oq1_QieUb7g5u47BAyUhWPd9wQc0eZg6SJ9p71Hl8)
+
+• Изменения в Процессуальный кодекс (https://docs.google.com/document/d/1qnSAiTfuLmxMMM8vT4uuwFzQkqjQXowmkdK1UUAEJ8o)
+
+• Изменения в закон о правовом статусе (https://docs.google.com/document/d/1_KKqUr2hkjbc4ydln8sLLVpAxV-hnTRy-YuPZvDJGUM)
+
+• Изменения в Процессуальный кодекс (https://docs.google.com/document/d/1ux1t-6OgcOVO3YW5PLki3sqBLqEFWaW7HaUplpFY0Nc)
+
+• Изменения в Процессуальный кодекс (https://docs.google.com/document/d/1VN9xLpQGlawJ6WfsyupLlwnuVF5LXqE3L7wrsRC-c2Q)
+
+Применены как «Было/Стало».
